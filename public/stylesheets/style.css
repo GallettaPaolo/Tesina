@@ -9,6 +9,11 @@
 nav ul a,
 nav .brand-logo {
   color: #444;
+  margin-left: 20px;
+}
+
+.margin{
+  display: inline-block;
 }
 
 .logoImg{

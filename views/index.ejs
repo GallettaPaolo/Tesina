@@ -13,6 +13,14 @@
 </head>
 
 <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.9&appId=1329352180491327";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
   <nav class="white" role="navigation">
     <div class="nav-wrapper container">
       <img class="logoImg" src="images/athager-logo.png" alt="">
@@ -52,11 +60,15 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                      <div class="centered col m4">
+                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                      </div>
+                      <div class="centered col m4">
+                        <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-scope="public_profile" data-use-continue-as="true" onlogin="updateStatusCallback">
+                        </div>                      
+                      </div>
                     </div>
-                  <div clas="row">
-                    <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="true"></div>
-                  </div>
+               
                   </div>
                 </form>
               </div>
