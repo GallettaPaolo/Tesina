@@ -1,6 +1,4 @@
-(function($){
-  $(function(){
-
+$(document).ready(function() {
     $('.button-collapse').sideNav({
       menuWidth: 300, // Default is 300
       edge: 'left', // Choose the horizontal origin
@@ -10,7 +8,6 @@
   );
     $('.parallax').parallax();
     $("#loginpopup").modal();
-    $(document).ready(function() {
     $.ajaxSetup({ cache: true });
     $.getScript('//connect.facebook.net/en_US/sdk.js', function(){
       FB.init({
@@ -20,18 +17,21 @@
       $('#loginbutton,#feedbutton').removeAttr('disabled');
       FB.getLoginStatus(updateStatusCallback);
     });
-  });
-  }); // end of document ready
-})(jQuery); // end of jQuery name space
 
+    $("#logout").click(function(){
+      FB.logout((response)=>{
+
+      });
+    })
+  });
 
 /**
  * Funzione che gestisce la registrazione/login tramite Facebook
  */
 function updateStatusCallback(response){ 
   if(response.status =="connected"){
-    FB.api('/me', function(response) {
-    alert(JSON.stringify(response));
+      FB.api('/me',{access_token: response.authResponse.accessToken, fields:"first_name,last_name,gender,location,picture"}, function(response) {
+        console.log(JSON.stringify(response));
     });
   }
 }

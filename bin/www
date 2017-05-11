@@ -7,6 +7,11 @@
 var app = require('../app');
 var debug = require('debug')('tesina:server');
 var http = require('http');
+var getHelper = require('../models/MongoHelper');
+
+var mongoIterator = getHelper();
+mongoIterator.connect();
+//mongoIterator.getCompetitions();
 
 /**
  * Get port from environment and store in Express.
