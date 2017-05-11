@@ -15,8 +15,8 @@ function MongoHelper(){
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/athletics";
     var assert = require("assert");
-    var database = true;
-    
+    var database;
+    connect();
     /**
      * Funzioni
      */
@@ -24,7 +24,6 @@ function MongoHelper(){
     function setDatabase(db){
         console.log("Imposto il db"+ database);
         database = db;
-        this.getCompetitions();
     }
 
     function getDatabase(){
@@ -34,7 +33,7 @@ function MongoHelper(){
     this.getUrl = ()=>{
         return url;
     }
-    this.connect = ()=>{
+    function connect (){
         function callback (db){
             setDatabase(db);
         }
