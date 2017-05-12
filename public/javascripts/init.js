@@ -30,8 +30,16 @@ $(document).ready(function() {
  */
 function updateStatusCallback(response){ 
   if(response.status =="connected"){
-      FB.api('/me',{access_token: response.authResponse.accessToken, fields:"first_name,last_name,gender,location,picture"}, function(response) {
-        console.log(JSON.stringify(response));
+      FB.api('/me',{access_token: response.authResponse.accessToken, fields:"first_name,last_name,email,picture"}, function(response) {
+        var currentUser = new User(response.first_name,response.last_name,response.picture.data.url,(response.email == undefined)?null:response.email,"facebook");
+        console.log("invio richiesta al server" + currentUser);
+        $.post(
+          "http://localhost:3000/users/login",{
+            user: JSON.stringify(currentUser)
+          },(response) =>{
+           alert(response) 
+          }
+        );
     });
   }
 }
@@ -40,5 +48,22 @@ function updateStatusCallback(response){
  * Funzione che gestisce la registrazione/login tramite Google
  */
 function onSignIn(googleUser){
+    var temp = googleUser.getBasicProfile();
+    var currentUser = new User(temp.getGivenName(),temp.getFamilyName(),temp.getImageUrl(),temp.getEmail(),"google");
+    console.log("invio richiesta al server" + currentUser);
+    $.post(
+          "http://localhost:3000/users/login",{
+            user: JSON.stringify(currentUser)
+          },(response) =>{
+           alert(response) 
+          }
+        );
+}
 
+var User = function(name,surname,imgUrl,email,authType){
+    this.name = name;
+    this.surname = surname;
+    this.imgUrl = imgUrl;
+    this.email = email;
+    this.authType = authType;
 }

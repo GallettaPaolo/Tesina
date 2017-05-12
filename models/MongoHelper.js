@@ -2,7 +2,7 @@
  * Classe Per l'iterazione con il Database (Singleton)
  */
 var singleton = null;
-var Competition = require("./Competition.js");
+
 /**
  * Costruttore dell'helper
  */
@@ -15,16 +15,7 @@ function MongoHelper(){
     var url = "mongodb://localhost:27017/athletics";
     var assert = require("assert");
     var database;
-    /**
-     * Funzioni
-     */
-    function getDatabase(){
-        return database;
-    }
-
-    this.getUrl = ()=>{
-        return url;
-    }
+ 
 
     /**
      * Funzione che ritorna tutte le competizioni 
@@ -32,7 +23,6 @@ function MongoHelper(){
     this.getCompetitions = ()=>{
         MongoClient.connect(url, function(err, db) {
             assert.equal(null, err);
-            console.log("Connessione effettuata");
             findCompetitions(db,()=>{
                 db.close();
             })
@@ -44,12 +34,29 @@ function MongoHelper(){
         var competitions = [];
         competitionsColl.find({}).toArray((err,coll)=>{
             coll.forEach(function(element) {
-                competitions.push(new Competition(element.code,element.date,element.scale,element.description,element.type,element.location));
+                competitions.push(element);
             }, this);
             console.log(competitions);
             callback();
         });
     }
+
+    this.logUser = (user) =>{
+        MongoClient.connect(url,(err,db) =>{
+            assert.equal(null,err);
+            findUser(db,user,()=>{
+                db.close();
+            });
+        });
+    }
+    var findUser = (db, user, callback) =>{
+        var usersColl = db.collection('users');
+        usersColl.find({email:user.email}).toArray((err,users) =>{
+            console.log("Err: "+err);
+            console.log("Users found"+users);
+        })
+    }
+
 
 };
 
