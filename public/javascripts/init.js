@@ -34,7 +34,7 @@ function updateStatusCallback(response){
         var currentUser = new User(response.first_name,response.last_name,response.picture.data.url,(response.email == undefined)?null:response.email,"facebook");
         console.log("invio richiesta al server" + currentUser);
         $.post(
-          "http://localhost:3000/users/login",{
+          "http://localhost:3000/users/logUserIn",{
             user: JSON.stringify(currentUser)
           },(response) =>{
            alert(response) 
@@ -52,7 +52,7 @@ function onSignIn(googleUser){
     var currentUser = new User(temp.getGivenName(),temp.getFamilyName(),temp.getImageUrl(),temp.getEmail(),"google");
     console.log("invio richiesta al server" + currentUser);
     $.post(
-          "http://localhost:3000/users/login",{
+          "http://localhost:3000/users/logUserIn",{
             user: JSON.stringify(currentUser)
           },(response) =>{
            alert(response) 
