@@ -3,7 +3,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <script src="javascripts/jquery.min.js"></script>
+  <script src="javascripts/jquery.min.js"></script>
   <script src="https://apis.google.com/js/platform.js" async defer></script>
   <meta name="google-signin-client_id" content="539406987228-pr009skdrel4mus3k08ujlmj3edsjf1a.apps.googleusercontent.com">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
@@ -14,14 +14,17 @@
 </head>
 
 <body>
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.9&appId=1329352180491327";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+  <div id="fb-root"></div>
+  <script>
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.9&appId=1329352180491327";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
   <nav class="white" role="navigation">
     <div class="nav-wrapper container">
       <img class="logoImg" src="images/athager-logo.png" alt="">
@@ -66,10 +69,10 @@
                       </div>
                       <div class="centered col m4">
                         <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-scope="public_profile" data-use-continue-as="true" onlogin="updateStatusCallback">
-                        </div>                      
+                        </div>
                       </div>
                     </div>
-               
+
                   </div>
                 </form>
               </div>
