@@ -13,19 +13,12 @@ function MongoHelper(){
      * Campi privati
      */
     var MongoClient = require('mongodb').MongoClient;
-    var url = "mongodb://localhost:27017/athletics";
+    var url = "mongodb://localhost:27017";
     var assert = require("assert");
     var database;
-    connect();
     /**
      * Funzioni
      */
-     
-    function setDatabase(db){
-        console.log("Imposto il db"+ database);
-        database = db;
-    }
-
     function getDatabase(){
         return database;
     }
@@ -33,26 +26,14 @@ function MongoHelper(){
     this.getUrl = ()=>{
         return url;
     }
-    function connect (){
-        function callback (db){
-            setDatabase(db);
-        }
-        MongoClient.connect(url, function(err, db) {
-            assert.equal(null, err);
-            console.log("Connected successfully to server");
-            callback(db);
-        });
-    };
 
     this.getCompetitions = ()=>{
-        
-        var competitions = getDatabase().collection("competitions");
-        competitions.find({}).toArray((err,docs)=>{
-            assert.equal(err, null);
-            console.log("Found the following records");
-            console.log(docs)
-            callback(docs);
-        })
+        MongoClient.connect(url, function(err, db) {
+        assert.equal(null, err);
+        var competitios = db.collection('competitions');
+        console.log(competitions);
+        db.close();
+});
     }
 };
 
