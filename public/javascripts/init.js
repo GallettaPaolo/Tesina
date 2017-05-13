@@ -1,3 +1,4 @@
+var loggedUser;
 $(document).ready(function() {
   $('.button-collapse').sideNav({
     menuWidth: 300, // Default is 300
@@ -36,6 +37,7 @@ function updateStatusCallback(response) {
       fields: "first_name,last_name,email,picture"
     }, function(response) {
       var currentUser = new User(response.first_name, response.last_name, response.picture.data.url, (response.email == undefined) ? null : response.email, "facebook");
+      setAutoLogin(currentUser);
       console.log("invio richiesta al server" + currentUser);
       $.post(
         "http://localhost:3000/users/logUserIn", {
@@ -48,13 +50,20 @@ function updateStatusCallback(response) {
   }
 }
 
+function setAutoLogin(user) {
+  loggedUser = user;
+  $(".roundImg").attr("src", user.imgUrl);
+  $(".welcome").text("Benvenuto " + user.name);
+}
+
+
 /**
  * Funzione che gestisce la registrazione/login tramite Google
  */
 function onSignIn(googleUser) {
   var temp = googleUser.getBasicProfile();
   var currentUser = new User(temp.getGivenName(), temp.getFamilyName(), temp.getImageUrl(), temp.getEmail(), "google");
-  console.log("invio richiesta al server" + currentUser);
+  setAutoLogin(currentUser);
   $.post(
     "http://localhost:3000/users/logUserIn", {
       user: JSON.stringify(currentUser)

@@ -70,41 +70,68 @@ function MongoHelper() {
 
   var doRegistration = (userColl, user, callback) => {
     userColl.insert(user, (err, result) => {
-      assert(null, err);
-      console.log(result);
+      assert.equal(null, err);
+      callback(true);
     })
   }
 
-  this.registerUser = (user) => {
+  this.registerUser = (user, callback) => {
+    var success = true;
     MongoClient.connect(url, function(err, db) {
       assert.equal(null, err);
       var userColl = db.collection('users');
       doRegistration(userColl, user, (registered) => {
         db.close();
         if (!registered)
-          return "Si è verificato un errore durante la registrazione";
+          success = "Error";
+        callback(success);
       })
     });
   }
-  this.getRoles = (callback)=>{
-    MongoClient.connect(url,(err,db)=>{
-      assert.equal(null,err);
+  this.getRoles = (callback) => {
+    MongoClient.connect(url, (err, db) => {
+      console.log("roles: " + err);
+      assert.equal(null, err);
       var roleColl = db.collection('role');
-      var roles = findRoles(roleColl,(rol)=>{
+      var roles = findRoles(roleColl, (rol) => {
         db.close();
-        console.log("Dentro il callback"+ rol);
+        console.log("Dentro il callback" + rol);
         callback(rol);
       });
     })
   }
 
-  var findRoles = (roleColl,callback) =>{
-    roleColl.find({},{name:1, _id: 0}).toArray((err,arr)=>{
-      var rol = arr;
-      console.log("Dentro il toArray: "+rol);
-      callback(rol)
+  var findRoles = (roleColl, callback) => {
+    roleColl.find({}, {
+      name: 1,
+      _id: 0
+    }).toArray((err, arr) => {
+      callback(arr)
     })
-  
+
+  }
+
+  this.getAthleteCategory = (callback) => {
+    MongoClient.connect(url, (err, db) => {
+      console.log("category: " + err);
+      assert.equal(null, err);
+      var catColl = db.collection("athleteCategory");
+      findCategories(catColl, (result) => {
+        db.close();
+        console.log("Callback" + result);
+        callback(result);
+      })
+    })
+  }
+
+  var findCategories = (catColl, callback) => {
+    catColl.find({}, {
+      categoryName: 1,
+      _id: 0
+    }).toArray((err, categories) => {
+      console.log("find: " + categories);
+      callback(categories);
+    })
   }
 
 };

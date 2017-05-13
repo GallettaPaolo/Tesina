@@ -11,16 +11,21 @@ router.post("/logUserIn", (req, res, next) => {
 
 router.get('/register', (req, res, next) => {
   mongoInstance.getRoles((possibleRoles)=>{
-    res.render('registerForm', {
-      roles: possibleRoles
-    });
+    mongoInstance.getAthleteCategory((possibleCategories)=>{
+      console.log(possibleCategories);
+      res.render('registerForm', {
+            roles: possibleRoles,
+            categories: possibleCategories
+          });
+      })
   });
 })
 
 router.post('/registerUser', function(req, res, next) {
   var currentUser = JSON.parse(req.body.user);
-  console.log("Devo registrare:" + currentUser);
-  mongoInstance.registerUser(currentUser);
+  mongoInstance.registerUser(currentUser, (response)=>{
+    console.log(response);
+  });
 });
 
 module.exports = router;

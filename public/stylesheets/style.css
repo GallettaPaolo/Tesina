@@ -13,6 +13,13 @@ nav ul a, nav .brand-logo {
   margin-left: 20px;
 }
 
+.welcome {
+  position: absolute;
+  top: 1px;
+  right: -150px;
+  color: black;
+}
+
 .margin {
   display: inline-block;
 }
@@ -81,15 +88,35 @@ footer.page-footer {
   bottom: 5px;
 }
 
-.fileExplorer{
+.fileExplorer {
   position: absolute;
   top: -100px;
 }
 
-.centered{
-  margin:auto;
+.centered {
+  margin: auto;
 }
 
-.waves-effect.waves-cyan .waves-ripple{
+.waves-effect.waves-cyan .waves-ripple {
   background-color: #18ffff;
+}
+
+.allCard {
+  width: 100%;
+}
+
+.background {
+  background-size: inherit;
+  background-image: url("../images/reg-bg.jpg");
+  background-repeat: no-repeat;
+}
+
+.roundImg {
+  display: block;
+  margin: auto auto -10px auto;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  bottom: -10px;
 }

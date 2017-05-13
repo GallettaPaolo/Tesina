@@ -1,195 +1,155 @@
 <!DOCTYPE html>
 <html lang="it">
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <script src="javascripts/jquery.min.js"></script>
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
-  <meta name="google-signin-client_id" content="539406987228-pr009skdrel4mus3k08ujlmj3edsjf1a.apps.googleusercontent.com">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
-  <title>
-    <%= title %>
-  </title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="stylesheets/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="stylesheets/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
-</head>
+<% include ./partials/header %>
 
-<body>
-  <div id="fb-root"></div>
-  <script>
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.9&appId=1329352180491327";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  </script>
-  <nav class="white" role="navigation">
-    <div class="nav-wrapper container">
-      <img class="logoImg" src="images/athager-logo.png" alt="">
-      <a id="logo-container" href="#" class="brand-logo">Athager</a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="#">Navbar Link</a></li>
-      </ul>
+  <body>
+    <div id="fb-root"></div>
+    <script>
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.9&appId=1329352180491327";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <% include ./partials/nav %>
 
-      <ul id="nav-mobile" class="side-nav">
-        <li><a href="#">Navbar Link</a></li>
-      </ul>
-      <a href="#" data-activates="nav-mobile" class="button-collapse cyan-text"><i class="material-icons">menu</i></a>
-    </div>
-  </nav>
-
-  <div id="index-banner" class="parallax-container">
-    <div class="section no-pad-bot">
-      <div class="container">
-        <br><br>
-        <h1 class="header center cyan-text lighten-1-text">Athager</h1>
-        <div class="row center">
-          <h5 class="header col s12 light">Il nuovo modo per gestire facilmente gli atleti</h5>
-        </div>
-        <div class="row center">
-          <a href="#loginpopup" id="download-button" class="btn-large waves-effect waves-light cyan lighten-1">Get Started</a>
-          <div id="loginpopup" class="modal gray-text">
-            <div class="modal-content">
-              <h4 class="black-text">Login</h4>
-              <div>
-                <form>
-                  <div class="container">
-                    <div class=" row">
-                      <div class="input-field">
-                        <i class="material-icons prefix">account_circle</i>
-                        <input id="icon_prefix" type="text" class="validate">
-                        <label for="icon_prefix">First Name</label>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="centered col m4">
-                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                      </div>
-                      <div class="centered col m4">
-                        <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-scope="public_profile" data-use-continue-as="true" onlogin="updateStatusCallback">
+      <div id="index-banner" class="parallax-container">
+        <div class="section no-pad-bot">
+          <div class="container">
+            <br><br>
+            <h1 class="header center cyan-text lighten-1-text">Athager</h1>
+            <div class="row center">
+              <h5 class="header col s12 light">Il nuovo modo per gestire facilmente gli atleti</h5>
+            </div>
+            <div class="row center">
+              <a href="#loginpopup" id="download-button" class="btn-large waves-effect waves-light cyan lighten-1">Get Started</a>
+              <div id="loginpopup" class="modal gray-text">
+                <div class="modal-content">
+                  <h4 class="black-text">Login</h4>
+                  <div>
+                    <form>
+                      <div class="container">
+                        <div class=" row">
+                          <div class="input-field">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input id="icon_prefix" type="text" class="validate">
+                            <label for="icon_prefix">First Name</label>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                        <div class="row">
+                          <div class="centered col m4">
+                            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                          </div>
+                          <div class="centered col m4">
+                            <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-scope="public_profile" data-use-continue-as="true" onlogin="updateStatusCallback">
+                            </div>
+                          </div>
+                        </div>
 
+                      </div>
+                    </form>
                   </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                  <a href="#!" class="modal-action modal-close waves-effect waves-cyan btn-flat">Login</a>
+                  <a href="#!" class="modal-action modal-close waves-effect waves-cyan btn-flat">Annulla</a>
+                </div>
               </div>
             </div>
-            <div class="modal-footer">
-              <a href="#!" class="modal-action modal-close waves-effect waves-cyan btn-flat">Login</a>
-              <a href="#!" class="modal-action modal-close waves-effect waves-cyan btn-flat">Annulla</a>
+            <br><br>
+
+          </div>
+        </div>
+        <div class="parallax"><img src="images/background1.jpg" alt="Unsplashed background img 1"></div>
+      </div>
+
+
+      <div class="container">
+        <div class="section">
+
+          <!--   Icon Section   -->
+          <div class="row">
+            <div class="col s12 m4">
+              <div class="icon-block">
+                <h2 class="center cyan-text"><i class="material-icons">flash_on</i></h2>
+                <h5 class="center">Speeds up development</h5>
+
+                <p class="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
+              </div>
+            </div>
+
+            <div class="col s12 m4">
+              <div class="icon-block">
+                <h2 class="center cyan-text"><i class="material-icons">group</i></h2>
+                <h5 class="center">User Experience Focused</h5>
+
+                <p class="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all
+                  platforms allow for a more unified user experience.</p>
+              </div>
+            </div>
+
+            <div class="col s12 m4">
+              <div class="icon-block">
+                <h2 class="center cyan-text"><i class="material-icons">settings</i></h2>
+                <h5 class="center">Easy to work with</h5>
+
+                <p class="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="parallax-container valign-wrapper">
+        <div class="section no-pad-bot">
+          <div class="container">
+            <div class="row center">
+              <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
             </div>
           </div>
         </div>
-        <br><br>
-
+        <div class="parallax"><img src="images/background2.jpg" alt="Unsplashed background img 2"></div>
       </div>
-    </div>
-    <div class="parallax"><img src="images/background1.jpg" alt="Unsplashed background img 1"></div>
-  </div>
+
+      <div class="container">
+        <div class="section">
+
+          <div class="row">
+            <div class="col s12 center">
+              <h3><i class="mdi-content-send brown-text"></i></h3>
+              <h4>Contact Us</h4>
+              <p class="left-align light">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque id nunc nec volutpat. Etiam pellentesque tristique arcu, non consequat magna fermentum ac. Cras ut ultricies eros. Maecenas eros justo, ullamcorper a sapien id,
+                viverra ultrices eros. Morbi sem neque, posuere et pretium eget, bibendum sollicitudin lacus. Aliquam eleifend sollicitudin diam, eu mattis nisl maximus sed. Nulla imperdiet semper molestie. Morbi massa odio, condimentum sed ipsum ac,
+                gravida ultrices erat. Nullam eget dignissim mauris, non tristique erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
 
 
-  <div class="container">
-    <div class="section">
-
-      <!--   Icon Section   -->
-      <div class="row">
-        <div class="col s12 m4">
-          <div class="icon-block">
-            <h2 class="center cyan-text"><i class="material-icons">flash_on</i></h2>
-            <h5 class="center">Speeds up development</h5>
-
-            <p class="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
+      <div class="parallax-container valign-wrapper">
+        <div class="section no-pad-bot">
+          <div class="container">
+            <div class="row center">
+              <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
+            </div>
           </div>
         </div>
-
-        <div class="col s12 m4">
-          <div class="icon-block">
-            <h2 class="center cyan-text"><i class="material-icons">group</i></h2>
-            <h5 class="center">User Experience Focused</h5>
-
-            <p class="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms
-              allow for a more unified user experience.</p>
-          </div>
-        </div>
-
-        <div class="col s12 m4">
-          <div class="icon-block">
-            <h2 class="center cyan-text"><i class="material-icons">settings</i></h2>
-            <h5 class="center">Easy to work with</h5>
-
-            <p class="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
-          </div>
-        </div>
+        <div class="parallax"><img src="images/background3.jpg" alt="Unsplashed background img 3"></div>
       </div>
 
-    </div>
-  </div>
+      <% include ./partials/footer %>
 
-
-  <div class="parallax-container valign-wrapper">
-    <div class="section no-pad-bot">
-      <div class="container">
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-      </div>
-    </div>
-    <div class="parallax"><img src="images/background2.jpg" alt="Unsplashed background img 2"></div>
-  </div>
-
-  <div class="container">
-    <div class="section">
-
-      <div class="row">
-        <div class="col s12 center">
-          <h3><i class="mdi-content-send brown-text"></i></h3>
-          <h4>Contact Us</h4>
-          <p class="left-align light">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque id nunc nec volutpat. Etiam pellentesque tristique arcu, non consequat magna fermentum ac. Cras ut ultricies eros. Maecenas eros justo, ullamcorper a sapien id, viverra
-            ultrices eros. Morbi sem neque, posuere et pretium eget, bibendum sollicitudin lacus. Aliquam eleifend sollicitudin diam, eu mattis nisl maximus sed. Nulla imperdiet semper molestie. Morbi massa odio, condimentum sed ipsum ac, gravida ultrices
-            erat. Nullam eget dignissim mauris, non tristique erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-
-  <div class="parallax-container valign-wrapper">
-    <div class="section no-pad-bot">
-      <div class="container">
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-      </div>
-    </div>
-    <div class="parallax"><img src="images/background3.jpg" alt="Unsplashed background img 3"></div>
-  </div>
-
-  <footer class="page-footer cyan">
-    <div class="container">
-
-      <h5 class="white-text">Athager&copy;</h5>
-
-      <p class="grey-text text-lighten-4">Presentato come progetto di tesina per la maturità, Athager è stato progettato, pensato e creato per rendere più veloce ed immediata la gestione degli atleti.</p>
-      <p class="grey-text text-lighten-4">L'autore del progetto, inoltre, si è prefissato di utilizzare tecnologie all'avanguardia utili nel futuro mondo del lavoro e per stuzzicare la curiosità degli studenti.</p>
-      <a id="logout">Slogga</a>
-    </div>
-    <div class="footer-copyright">
-      <div class="container">
-        Made by Paolo Galletta
-      </div>
-    </div>
-  </footer>
-
-
-  <!--  Scripts-->
-  <script src="javascripts/materialize.js"></script>
-  <script src="javascripts/init.js"></script>
-</body>
+        <!--  Scripts-->
+        <script src="javascripts/materialize.js"></script>
+        <script src="javascripts/init.js"></script>
+  </body>
 
 </html>
