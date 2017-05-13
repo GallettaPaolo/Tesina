@@ -6,6 +6,7 @@
   <script src="../javascripts/jquery.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
   <title>Parallax Template - Materialize</title>
+  <script src="../javascripts/registration.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="../stylesheets/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
   <link href="../stylesheets/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
@@ -14,22 +15,74 @@
 <body>
   <div class="container">
     <div class="row">
+      <input name="img" class="fileExplorer" type="file" />
+      <!-- Input file nascosto che viene azionato dal floating button verde -->
       <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="../images/man.png">
-            <div class="fixed-action-btn">
-              <a class="btn-floating btn-large red">
+            <div class="fixed-action-btn horizontal">
+              <a class="btn-floating btn-large red openFile">
                 <i class="large material-icons">mode_edit</i>
               </a>
-              <ul>
-                <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-                <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-              </ul>
             </div>
           </div>
-          <div class="card-content">
-            <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
+          <div class="container">
+            <div class="row">
+              <div class="input-field col m6 s12">
+                <input id="name" type="text" class="validate" />
+                <label for="name">Nome</label>
+              </div>
+              <div class="input-field col m6 s12">
+                <input id="surname" type="text" class="validate" />
+                <label for="surname">Cognome</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field">
+                  <input id="email" type="email" class="validate" />
+                  <label for="email">Email</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field ">
+                  <input id="confirmEmail" type="email" class="validate" />
+                  <label for="confirmEmail">Conferma email</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field ">
+                  <input id="password" type="password" class="validate" />
+                  <label for="password">Password</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field ">
+                  <input id="confirmPassword" type="password" class="validate" />
+                  <label for="confirmPassword">Conferma password</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field">
+                  <select>
+              <option value="" disabled selected>Scegli un ruolo</option>
+              <% roles.forEach(function(role){ %>
+              <option  value=<%= role.name %>><%= role.name %> </option>
+              <%});%>
+            </select>
+                  <label>Ruolo</label>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

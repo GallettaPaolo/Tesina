@@ -80,3 +80,16 @@ footer.page-footer {
   right: 23px;
   bottom: 5px;
 }
+
+.fileExplorer{
+  position: absolute;
+  top: -100px;
+}
+
+.centered{
+  margin:auto;
+}
+
+.waves-effect.waves-cyan .waves-ripple{
+  background-color: #18ffff;
+}

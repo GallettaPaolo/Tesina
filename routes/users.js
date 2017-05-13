@@ -10,7 +10,11 @@ router.post("/logUserIn", (req, res, next) => {
 })
 
 router.get('/register', (req, res, next) => {
-  res.render('registerForm');
+  mongoInstance.getRoles((possibleRoles)=>{
+    res.render('registerForm', {
+      roles: possibleRoles
+    });
+  });
 })
 
 router.post('/registerUser', function(req, res, next) {

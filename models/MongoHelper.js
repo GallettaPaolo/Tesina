@@ -86,6 +86,26 @@ function MongoHelper() {
       })
     });
   }
+  this.getRoles = (callback)=>{
+    MongoClient.connect(url,(err,db)=>{
+      assert.equal(null,err);
+      var roleColl = db.collection('role');
+      var roles = findRoles(roleColl,(rol)=>{
+        db.close();
+        console.log("Dentro il callback"+ rol);
+        callback(rol);
+      });
+    })
+  }
+
+  var findRoles = (roleColl,callback) =>{
+    roleColl.find({},{name:1, _id: 0}).toArray((err,arr)=>{
+      var rol = arr;
+      console.log("Dentro il toArray: "+rol);
+      callback(rol)
+    })
+  
+  }
 
 };
 
