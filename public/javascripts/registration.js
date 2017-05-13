@@ -29,5 +29,30 @@ $(document).ready(function(){
             $("#confirmPassword").addClass("invalid");
         else
             $("#confirmPassword").removeClass("invalid");
+    });
+
+    $(".fileExplorer").change(function(){
+        var file = $(".fileExplorer")[0].files[0];
+        var reader = new FileReader();
+        reader.addEventListener("load",()=>{
+            $("#profileImg").attr("src",reader.result);
+        });
+        if(file){
+            reader.readAsDataURL(file);
+        }
+    });
+
+    $("select").change(function(){
+        if($("select").val() == "Atleta")
+            $("select").parent().parent().parent().append(
+            '<div class="col m3 s12">'+
+            '<select>'+
+            
+            '</select'+
+            '</div>'
+            )
+
     })
+
+
 })
