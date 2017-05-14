@@ -57,17 +57,15 @@ $(document).ready(function() {
 
   $(".allCard").click(() => {
     $.post(
-      "http://localhost:3000/users/registerUser", {
-        user: JSON.stringify({
+      "http://localhost:3000/signup", {
           name: $("#name").val(),
           surname: $("#surname").val(),
           imgUrl: $("#profileImg").attr("src"),
-          email: $("#name").val(),
+          email: $("#email").val(),
           authType: "athager",
           password: md5($("#password").val()),
           role: $("#role").val(),
           speciality: $(".specDiv input").val().trim()
-        })
       }, (response) => {
         alert("response");
       }
