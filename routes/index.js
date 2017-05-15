@@ -35,8 +35,11 @@ router.get('/logout', function(req, res) {
 
 
 router.get("/file",(req,res)=>{
-  fileSystemHelper.createFolder("prova",()=>{
-    console.log("hey");
+  fileSystemHelper.storeProfileImg("profilo1","paolo","Ciao sono paolo",(stored)=>{
+    if(stored)
+      console.log("salvato");
+      else
+      console.log("errore");
   })
 })
 
@@ -46,20 +49,13 @@ router.post('/signup', function(req, res, next) {
     if (!user) { return res.redirect('/login'); }
     req.logIn(user, function(err) {
       if (err) { return next(err); }
-      console.log("PORCO IL GESU CRISTO");
-      console.log(JSON.stringify(req.user))
-      console.log(fileSystemHelper);
-      var image = new Buffer(req.body.imgUrl, "base64");
+      console.log(req.body.imgUrl.substring(0,req.body.imgUrl.indexOf(",")+2));
+      var data = req.body.imgUrl.replace(/^data:image\/\w+;base64,/, '');
       console.log("Hey");
-      fileSystemHelper.createFolder(req.user._id,(created)=>{
-          if(created)
-            fileSystemHelper.writeIntoFile(image,req.user._id,(written)=>{
-              if(written) console.log("ok");
-              else console.log("File non creato");
-            })
-            else console.log("Cartella non creata")
+      fileSystemHelper.storeProfileImg(req.user._id,"profileImg.jpg",data,(stored)=>{
+          console.log(stored);
       })
-     /* mongoInstance.updateUser({
+      mongoInstance.updateUser({
         email: req.body.email, 
         password: req.body.password
       },{
@@ -73,7 +69,7 @@ router.post('/signup', function(req, res, next) {
           req.user.surname= surname;
           req.user.imgUrl = imgUrl;
           res.send(success);          
-      } )*/
+      } )
     });
   })(req, res, next);
 });
