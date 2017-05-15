@@ -67,7 +67,8 @@ $(document).ready(function() {
           role: $("#role").val(),
           speciality: $(".specDiv input").val().trim()
       }, (response) => {
-        alert("response");
+        if(response==true)
+          $(location).attr("href","/main");
       }
     )
   });

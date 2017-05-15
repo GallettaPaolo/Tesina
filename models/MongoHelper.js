@@ -20,6 +20,28 @@ function MongoHelper() {
   /**
    * Funzione che ritorna tutte le competizioni
    */
+
+this.updateUser = (filter,data,callback) =>{
+  console.log("filtro "+filter);
+  console.log("data "+data);
+  MongoClient.connect(url, function(err, db) {
+      assert.equal(null, err);
+      var userColl = db.collection("users");
+      updatingUser(userColl,db,filter,data, (updated) => {
+        db.close();
+        callback(updated);
+      })
+    });
+}
+
+var updatingUser = (userColl,db,filter,data,callback)=>{
+    userColl.updateOne({email:filter.email},{$set: data},(err,r)=>{
+          assert.equal(err, null);
+          assert.equal(1, r.result.n);
+          callback(true);
+    })
+}
+
   this.getCompetitions = () => {
     MongoClient.connect(url, function(err, db) {
       assert.equal(null, err);

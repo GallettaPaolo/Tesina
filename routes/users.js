@@ -10,15 +10,7 @@ router.post("/logUserIn", (req, res, next) => {
 })
 
 router.get('/register', (req, res, next) => {
-  mongoInstance.getRoles((possibleRoles)=>{
-    mongoInstance.getAthleteCategory((possibleCategories)=>{
-      console.log(possibleCategories);
-      res.render('registerForm', {
-            roles: possibleRoles,
-            categories: possibleCategories
-          });
-      })
-  });
+  
 })
 
 router.post('/registerUser', function(req, res, next) {
