@@ -26,19 +26,19 @@
               <h5 class="header col s12 light">Il nuovo modo per gestire gli atleti</h5>
             </div>
             <div class="row center">
-              <a href="#loginpopup" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">Get Started</a>
+              <a href="#loginpopup" id="login-button" class="btn-large waves-effect waves-light teal lighten-1">Get Started</a>
               <div id="loginpopup" class="modal gray-text">
                 <div class="modal-content">
                   <h4 class="black-text">Login</h4>
                   <div>
-                    <form>
+                    <form class="black-text">
                       <div class="row">
                         <div class="col s12 m6 input-field">
                           <input id="email" class="validate" type="email" />
                           <label for="email">Email</label>
                         </div>
                         <div class="col s12 m6 input-field">
-                          <input id="password" class="validate" type="email" />
+                          <input id="password" class="validate" type="password" />
                           <label for="password">Password</label>
                         </div>
                       </div>
@@ -50,17 +50,12 @@
                           <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-scope="public_profile" data-use-continue-as="true" onlogin="updateStatusCallback">
                           </div>
                         </div>
-                        <div class="col m4">
-                          <button class="btn waves-effect waves-light allCard" type="submit" name="action">Login
-                                            <i class="material-icons right">send</i>
-                                        </button>
-                        </div>
                       </div>
                     </form>
                   </div>
                 </div>
-                <div class="modal-footer">
-                  <a href="#!" class="modal-action modal-close waves-effect waves-cyan btn-flat">Login</a>
+                <div class="modal-footer fixed">
+                  <a href="#!" class="login modal-action modal-close waves-effect waves-cyan btn-flat">Login</a>
                   <a href="#!" class="modal-action modal-close waves-effect waves-cyan btn-flat">Annulla</a>
                 </div>
               </div>
