@@ -25,6 +25,16 @@ $(document).ready(function() {
 
     });
   })
+
+
+  $(".login").click(() => {
+    $.post("http://localhost:3000/login", {
+      email: $("#email").val(),
+      password: md5($("#password").val())
+    }, (response) => {
+      $(location).attr("href", response);
+    })
+  })
 });
 
 /**
@@ -54,6 +64,22 @@ function setAutoLogin(user) {
   loggedUser = user;
   $(".roundImg").attr("src", user.imgUrl);
   $(".welcome").text("Benvenuto " + user.name);
+
+  if (!$("#loginpopup").is(":visible")) {
+    $("#login-button").click(() => {
+      $.get("http://localhost:3000/autoLog", {
+        curUser: JSON.stringify(user)
+      }, (response) => {
+        $(location).attr("href", response);
+      })
+    })
+  } else {
+    $.get("http://localhost:3000/autoLog", {
+      curUser: JSON.stringify(user)
+    }, (response) => {
+      $(location).attr("href", response);
+    })
+  }
 }
 
 
@@ -64,13 +90,6 @@ function onSignIn(googleUser) {
   var temp = googleUser.getBasicProfile();
   var currentUser = new User(temp.getGivenName(), temp.getFamilyName(), temp.getImageUrl(), temp.getEmail(), "google");
   setAutoLogin(currentUser);
-  $.post(
-    "http://localhost:3000/users/logUserIn", {
-      user: JSON.stringify(currentUser)
-    }, (response) => {
-      alert(response)
-    }
-  );
 }
 
 var User = function(name, surname, imgUrl, email, authType) {

@@ -20,6 +20,10 @@ nav ul a, nav .brand-logo {
   color: black;
 }
 
+.modal input{
+  color:black;
+}
+
 .margin {
   display: inline-block;
 }
@@ -119,8 +123,4 @@ footer.page-footer {
   height: 50px;
   border-radius: 50px;
   bottom: -10px;
-}
-
-main{
-  padding-left:300px;
 }

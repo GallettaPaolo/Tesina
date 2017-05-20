@@ -64,7 +64,7 @@ $(document).ready(function() {
           email: $("#email").val(),
           authType: "athager",
           password: md5($("#password").val()),
-          role: $("#role").val(),
+          role: $(".rolesDiv input").val().trim(),
           speciality: $(".specDiv input").val().trim()
       }, (response) => {
         if(response==true)

@@ -8,10 +8,10 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
-var passport = require('passport');  
-var LocalStrategy = require('passport-local').Strategy;  
-var mongoose = require('mongoose');  
-var flash = require('connect-flash');  
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var mongoose = require('mongoose');
+var flash = require('connect-flash');
 var session = require('express-session');
 
 var app = express();
@@ -33,10 +33,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname,'users')));
 
-app.use(session({ secret: 'shhsecret', resave:true,saveUninitialized: true }));  
-app.use(passport.initialize());  
-app.use(passport.session());  
+app.use(session({ secret: 'shhsecret', resave:true,saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
 
 app.use('/', index);
@@ -50,7 +51,7 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-if (app.get('env') === 'development') {  
+if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

@@ -1,4 +1,5 @@
 <header>
+<button class="hide redirect"></button>
 <div class="container">
     <a href="#" class="button-collapse top-nav full hide-on-large-only" data-activates="nav-mobile">
     <i class="material-icons">menu</i>
@@ -7,11 +8,20 @@
 <ul id="nav-mobile" class="side-nav fixed">
     <li><div class="userView">
       <div class="background">
-        <img src="images/office.jpg">
+        <img src="images/navBackground.png">
       </div>
-      <a href="#!user"><img class="circle" src="images/man.jpg"></a>
-      <a href="#!name"><span class="white-text name">John Doe</span></a>
-      <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+      <span class="auth hide" data-auth=<%= user.authType %>></span>
+      <a href="#!user"><img class="circle" src= <%= user.imgUrl%> ></a>
+      <a href="#!name"><span class="white-text name"><%= user.name %></span></a>
+      <a href="#!email"><span class="white-text email"><%= user.email%> </span></a>
     </div></li>
+
+    <li><a id=<%= actions[0].action%> class="waves-effect"><i class="material-icons"><%= actions[actions.length-1].icon %> </i> <%= actions[actions.length-1].action %></a></li>
+    <%
+      actions.splice(0,actions.length -2).forEach((a)=>{
+     %>
+     <li><a id=<%= a.action %> class="waves-effect"><i class="material-icons"><%= a.icon %> </i> <%= a.action %></a></li>
+     <%   }) %>
+     <li><a id=<%= actions[actions.length-2].action%> class="waves-effect"><i class="material-icons"><%= actions[actions.length-2].icon %> </i> <%= actions[actions.length-2].action %></a></li>
 </ul>
 </header>

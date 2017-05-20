@@ -15,15 +15,18 @@ function MongoHelper() {
   var url = "mongodb://localhost:27017/athletics";
   var assert = require("assert");
   var database;
-
+  var socketCallback;
 
   /**
    * Funzione che ritorna tutte le competizioni
    */
 
+this.setCallback = (callback)=>{
+  socketCallback = callback;
+  socketCallback("prova","prova");
+}
+
 this.updateUser = (filter,data,callback) =>{
-  console.log("filtro "+filter);
-  console.log("data "+data);
   MongoClient.connect(url, function(err, db) {
       assert.equal(null, err);
       var userColl = db.collection("users");
@@ -42,11 +45,38 @@ var updatingUser = (userColl,db,filter,data,callback)=>{
     })
 }
 
-  this.getCompetitions = () => {
+
+this.getActions = (athleteRole,callback)=>{
+  MongoClient.connect(url,(err,db)=>{
+    assert.equal(null,err);
+    var NavBarActionColl = db.collection('NavbarActions');
+    findActions(athleteRole,NavBarActionColl,(actions)=>{
+      db.close();
+      callback(actions);
+    })
+  })
+}
+var findActions = (athleteRole,navbarColl,callback)=>{
+  console.log(athleteRole);
+  navbarColl.find({$or: [{name: athleteRole},{name: "all"}]},{_id:0,name:0}).toArray((err,acts)=>{
+    var totActions = [];
+    acts.forEach((e)=>{
+      e.actions.forEach((es)=>{
+        totActions.push(es);
+      })
+    })
+    callback(totActions);
+  });
+}
+
+
+
+  this.getCompetitions = (callback) => {
     MongoClient.connect(url, function(err, db) {
       assert.equal(null, err);
-      findCompetitions(db, () => {
+      findCompetitions(db, (competitions) => {
         db.close();
+        callback(competitions);
       })
     });
   }
@@ -54,13 +84,16 @@ var updatingUser = (userColl,db,filter,data,callback)=>{
   var findCompetitions = (db, callback) => {
     var competitionsColl = db.collection('competitions');
     var competitions = [];
-    competitionsColl.find({}).toArray((err, coll) => {
+    var dat = new Date();
+    var dateToQuery = dat.getDate()+dat.getMonth();
+    competitionsColl.find({date:{$gt: dateToQuery}}).toArray((err, coll) => {
       coll.forEach(function(element) {
         competitions.push(element);
       }, this);
-      callback();
+      callback(competitions);
     });
   }
+
 
   this.logUser = (user) => {
     MongoClient.connect(url, (err, db) => {
