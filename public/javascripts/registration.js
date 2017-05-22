@@ -1,37 +1,37 @@
-$(document).ready(function() {
+$(document).ready(function () {
   $('select').material_select();
-  $(".openFile").click(function() {
+  $(".openFile").click(function () {
     console.log("devo triggerare l'input");
     $(".fileExplorer").trigger("click");
   });
   $("#urlPopup").modal();
-  $("#confirmEmail").keypress(function() {
+  $("#confirmEmail").keypress(function () {
     if ($("#confirmEmail").val() != $("#email").val())
       $("#confirmEmail").addClass("invalid");
     else
       $("#confirmEmail").removeClass("invalid");
   });
-  $("#confirmEmail").blur(function() {
+  $("#confirmEmail").blur(function () {
     if ($("#confirmEmail").val() != $("#email").val())
       $("#confirmEmail").addClass("invalid");
     else
       $("#confirmEmail").removeClass("invalid");
   })
 
-  $("#confirmPassword").keypress(function() {
+  $("#confirmPassword").keypress(function () {
     if ($("#confirmPassword").val() != $("#password").val())
       $("#confirmPassword").addClass("invalid");
     else
       $("#confirmPassword").removeClass("invalid");
   });
-  $("#confirmPassword").blur(function() {
+  $("#confirmPassword").blur(function () {
     if ($("#confirmPassword").val() != $("#password").val())
       $("#confirmPassword").addClass("invalid");
     else
       $("#confirmPassword").removeClass("invalid");
   });
 
-  $(".fileExplorer").change(function() {
+  $(".fileExplorer").change(function () {
     var file = $(".fileExplorer")[0].files[0];
     var reader = new FileReader();
     reader.addEventListener("load", () => {
@@ -58,17 +58,17 @@ $(document).ready(function() {
   $(".allCard").click(() => {
     $.post(
       "http://localhost:3000/signup", {
-          name: $("#name").val(),
-          surname: $("#surname").val(),
-          imgUrl: $("#profileImg").attr("src"),
-          email: $("#email").val(),
-          authType: "athager",
-          password: md5($("#password").val()),
-          role: $(".rolesDiv input").val().trim(),
-          speciality: $(".specDiv input").val().trim()
+        name: $("#name").val(),
+        surname: $("#surname").val(),
+        imgUrl: $("#profileImg").attr("src"),
+        email: $("#email").val(),
+        authType: "athager",
+        password: md5($("#password").val()),
+        role: $(".rolesDiv input").val().trim(),
+        speciality: $(".specDiv input").val().trim()
       }, (response) => {
-        if(response==true)
-          $(location).attr("href","/main");
+        if (response == true)
+          $(location).attr("href", "/main");
       }
     )
   });
