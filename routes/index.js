@@ -20,6 +20,7 @@ router.get('/main', (req, res) => {
   var sess = req.session;
   mongoInstance.getActions("Atleta", (acts) => {
     mongoInstance.getCompetitions((comp) => {
+      console.log("Gare: "+comp);
       res.render('main', {
         user: sess.user,
         competitions: comp,

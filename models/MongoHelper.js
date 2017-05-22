@@ -85,13 +85,43 @@ var findActions = (athleteRole,navbarColl,callback)=>{
     var competitionsColl = db.collection('competitions');
     var competitions = [];
     var dat = new Date();
-    var dateToQuery = dat.getDate()+dat.getMonth();
+    var dateToQuery = dat.getDate()+"/"+dat.getMonth();
+    
     competitionsColl.find({date:{$gt: dateToQuery}}).toArray((err, coll) => {
       coll.forEach(function(element) {
         competitions.push(element);
       }, this);
-      callback(competitions);
+      findScales(db,(scales)=>{
+        console.log("Scalabilita "+scales);
+        competitions.forEach((elem)=>{
+            var index = scales.findIndex((item,i)=>{
+              return item.key == elem.scale
+            })
+            console.log(scales[index])
+            if(scales[index] == undefined)
+              console.log(elem);
+            elem.scale = scales[index].name;
+        })
+            callback(competitions);
+      })
     });
+  }
+
+  this.getScales = (callback)=>{
+   MongoClient.connect(url,(err,db)=>{
+     assert.equal(null,err);
+     findScales(db,(scales)=>{
+        db.close();
+        callback(scales);
+     })
+   }) 
+  }
+
+  var findScales = (db,callback)=>{
+    var scalesColl = db.collection("scale");
+    scalesColl.find({}).toArray((err,arr)=>{
+      callback(arr)
+    })
   }
 
 
