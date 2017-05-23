@@ -6,6 +6,11 @@ $(document).ready(function () {
     draggable: true // Choose whether you can drag to open on touch screens
   });
   var socket = io.connect("http://localhost:3000");
+  console.log(socket);
+  socket.on("subscription",(data)=>{
+    console.log(data.tot);
+    $("#iscrizioni").children('.badge').text(data.tot);
+  })
   /*gapi.load('auth2', function () {
     gapi.auth2.init();
   });*/

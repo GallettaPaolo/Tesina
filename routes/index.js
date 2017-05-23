@@ -12,13 +12,17 @@ router.get('/', function (req, res, next) {
 
 router.get('/autoLog', (req, res) => {
   var sess = req.session;
-  sess.user = JSON.parse(req.query.curUser);
-  res.send('http://localhost:3000/main');
+  var tmpUser = JSON.parse(req.query.curUser);
+  mongoInstance.getUserByEmail(tmpUser.email,(user)=>{
+    sess.user = user;
+    res.send('http://localhost:3000/main');
+  })
+  
 });
 
 router.get('/main', (req, res) => {
   var sess = req.session;
-  console.log(sess.user.role);
+  console.log("Ruolo: "+sess.user.role);
   console.log(sess.user.role == undefined);
   if (sess.user.role == undefined || sess.user.role == null)
     sess.user.isIncomplete = true;
@@ -85,7 +89,7 @@ router.post('/subscribe',(req,res)=>{
   console.log("devo fare un iscrizione");
   var sess = req.session;
   mongoInstance.subscribeAthlete(sess.user.email,req.body.compId,(subscribed)=>{
-    console.log(subscribed);
+    res.end();
   })
 })
 

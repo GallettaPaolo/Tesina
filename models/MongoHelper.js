@@ -56,7 +56,6 @@ function MongoHelper() {
     })
   }
   var findActions = (athleteRole, navbarColl, callback) => {
-    console.log(athleteRole);
     navbarColl.find({ $or: [{ name: athleteRole }, { name: "all" }] }, { _id: 0, name: 0 }).toArray((err, acts) => {
       var totActions = [];
       acts.forEach((e) => {
@@ -75,27 +74,34 @@ function MongoHelper() {
       userColl.find({ email: usrEmail }).toArray((err, arr) => {
         if (arr[0].subscriptions == undefined || arr[0].subscriptions == null)
           updatingUser(userColl, db, { email: usrEmail }, { subscriptions: [] }, (updated) => {
-            subscribe(usrEmail, compId, userColl, (subscribed) => {
+            subscribe(usrEmail, compId, userColl,0, (subscribed) => {
               db.close();
               callback(subscribed);
             })
           })
         else {
-          subscribe(usrEmail, compId, userColl, (subscribed) => {
+          if(arr[0].subscriptions.indexOf(compId) == -1)
+            subscribe(usrEmail, compId, userColl,arr[0].subscriptions.length, (subscribed) => {
+              db.close();
+              callback(subscribed);
+            })
+          else{
+  
             db.close();
-            callback(subscribed);
-          })
+            callback(true);
+          }
         }
       })
 
     })
   }
 
-  var subscribe = (usrEmail, compId, userColl, callback) => {
-    userColl.updateOne({email:usrEmail},{$push:{subscriptions: compId}},()=>{
+  var subscribe = (usrEmail, compId, userColl,subLen, callback) => {
+    userColl.updateOne({email:usrEmail},{$push:{subscriptions: compId}},(err,r)=>{
       assert.equal(null, err);
       assert.equal(1, r.result.n);
-      socketCallback("subscription",null);
+      console.log(socketCallback);
+      socketCallback("subscription",{tot: subLen+1});
       callback(true);
     })
 
@@ -122,14 +128,12 @@ function MongoHelper() {
         competitions.push(element);
       }, this);
       findScales(db, (scales) => {
-        console.log("Scalabilita " + scales);
         competitions.forEach((elem) => {
           var index = scales.findIndex((item, i) => {
             return item.key == elem.scale
           })
-          console.log(scales[index])
+
           if (scales[index] == undefined)
-            console.log(elem);
           elem.scale = scales[index].name;
         })
         callback(competitions);
@@ -154,6 +158,24 @@ function MongoHelper() {
     })
   }
 
+
+  this.getUserByEmail = (email,callback)=>{
+    MongoClient.connect(url,(err,db)=>{
+      assert.equal(null,err);
+      var userColl = db.collection('users');
+      getUserFromEmail(email,userColl,(user)=>{
+        db.close();
+        callback(user);
+      })
+    })
+  }
+
+  var getUserFromEmail = (email,userColl,callback)=>{
+    userColl.find({email: email}).toArray((err,arr)=>{
+      assert.equal(null,err);
+      callback(arr[0]);
+    })
+  }
 
   this.logUser = (user) => {
     MongoClient.connect(url, (err, db) => {
@@ -205,12 +227,11 @@ function MongoHelper() {
   }
   this.getRoles = (callback) => {
     MongoClient.connect(url, (err, db) => {
-      console.log("roles: " + err);
+
       assert.equal(null, err);
       var roleColl = db.collection('role');
       var roles = findRoles(roleColl, (rol) => {
         db.close();
-        console.log("Dentro il callback" + rol);
         callback(rol);
       });
     })
@@ -228,12 +249,10 @@ function MongoHelper() {
 
   this.getAthleteCategory = (callback) => {
     MongoClient.connect(url, (err, db) => {
-      console.log("category: " + err);
       assert.equal(null, err);
       var catColl = db.collection("athleteCategory");
       findCategories(catColl, (result) => {
         db.close();
-        console.log("Callback" + result);
         callback(result);
       })
     })
@@ -244,7 +263,6 @@ function MongoHelper() {
       categoryName: 1,
       _id: 0
     }).toArray((err, categories) => {
-      console.log("find: " + categories);
       callback(categories);
     })
   }
@@ -255,5 +273,7 @@ function MongoHelper() {
  * Funzione che viene esportata (Viene utilizzare per il pattern singleton)
  */
 module.exports = function getHelper() {
-  return (singleton == null) ? new MongoHelper() : singleton;
+  if (singleton == null) 
+    singleton = new MongoHelper();
+  return singleton;
 }

@@ -1,7 +1,6 @@
 $(document).ready(function () {
   $('select').material_select();
   $(".openFile").click(function () {
-    console.log("devo triggerare l'input");
     $(".fileExplorer").trigger("click");
   });
   $("#urlPopup").modal();
