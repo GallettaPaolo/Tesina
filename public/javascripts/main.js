@@ -41,6 +41,26 @@ $(document).ready(function () {
     }
   })
 
+  $(".addInfo").click(()=>{
+    $.post("http://localhost:3000/addInfo",{
+      email: $(".email").text().trim(),
+      fields: ["role","speciality"],
+      values: [$(".rolesDiv input").val().trim(), $(".specDiv input").val().trim()]
+    },(response)=>{
+      alert(response);
+      if(response)
+        $.get("http://localhost:3000/getActions?role="+values[0],(acts)=>{
+            alert(acts);
+            $(".actions").empty();
+            $(".actions").append('<li><a id="'+acts[0].action.toLowerCase()+'" class="waves-effect '+acts[0].action.toLowerCase()+'"><i class="material-icons"> '+acts[0].icon+'  </i>  '+acts[0].action+' </a></li>')
+            $.each(acts,(i,act)=>{
+              $(".actions").append('<li><a id="'+act.action.toLowerCase()+'" class="waves-effect '+act.action.toLowerCase()+'"><i class="material-icons"> '+act.icon+'  </i>  '+act.action+' </a></li>')
+            })
+            $(".actions").append('<li><a id="'+acts[acts.length-1].action.toLowerCase()+'" class="waves-effect '+acts[acts.length-1].action.toLowerCase()+'"><i class="material-icons"> '+acts[acts.length-1].icon+'  </i>  '+acts[acts.length-1].action+' </a></li>')
+        })
+    })
+  })
+
   $(".logout").click(() => {
     if ($(".auth").data("auth") == "google") {
       var auth2 = gapi.auth2.getAuthInstance();

@@ -27,7 +27,7 @@ router.get('/main', (req, res) => {
     sess.user.isIncomplete = false;
 
   console.log(JSON.stringify(sess.user));
-  mongoInstance.getActions("Atleta", (acts) => {
+  mongoInstance.getActions((sess.user.isIncomplete)?"Atleta":sess.user.role, (acts) => {
     mongoInstance.getCompetitions((comp) => {
       mongoInstance.getRoles((possibleRoles) => {
         mongoInstance.getAthleteCategory((possibleCategories) => {
@@ -42,6 +42,33 @@ router.get('/main', (req, res) => {
       })
     })
   });
+})
+
+
+router.post('/addInfo',(req,res)=>{
+  var sess = req.session;
+  var fields = req.body.fields;
+  var values = req.body.values;
+  var fieldsToAdd = {};
+  for(var i = 0; i < fields.length; i++){
+    fieldsToAdd[fields[i]] = values[i];
+  }
+
+  mongoInstance.updateUser({email: req.body.email},fieldsToAdd,(updated)=>{
+    if(updated){
+      for(var i = 0; i < fields.length; i++){
+          sess.user[fields[i]] = values[i];
+      }
+      res.send(updated);
+    }
+  })
+})
+
+router.get('/getActions',(req,res)=>{
+  var role = req.query.role;
+  mongoInstance.getActions(role,(acts)=>{
+    res.send(acts);
+  })
 })
 
 router.get('/register', (req, res) => {

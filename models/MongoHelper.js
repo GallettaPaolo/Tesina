@@ -23,7 +23,6 @@ function MongoHelper() {
 
 this.setCallback = (callback)=>{
   socketCallback = callback;
-  socketCallback("prova","prova");
 }
 
 this.updateUser = (filter,data,callback) =>{
