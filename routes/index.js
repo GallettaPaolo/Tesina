@@ -18,10 +18,9 @@ router.get('/autoLog', (req, res) => {
 
 router.get('/main', (req, res) => {
   var sess = req.session;
-  console.log("Ma porco dio");
   console.log(sess.user.role);
   console.log(sess.user.role == undefined);
-  if (sess.user.role == undefined)
+  if (sess.user.role == undefined || sess.user.role == null)
     sess.user.isIncomplete = true;
   else
     sess.user.isIncomplete = false;
@@ -82,6 +81,14 @@ router.get('/register', (req, res) => {
   });
 })
 
+router.post('/subscribe',(req,res)=>{
+  console.log("devo fare un iscrizione");
+  var sess = req.session;
+  mongoInstance.subscribeAthlete(sess.user.email,req.body.compId,(subscribed)=>{
+    console.log(subscribed);
+  })
+})
+
 router.get('/logout', function (req, res) {
   req.logout();
   req.session.destroy();
@@ -123,6 +130,7 @@ router.post('/signup', function (req, res, next) {
               imgUrl: stored,
               role: req.body.role,
               speciality: req.body.speciality,
+              subscriptions: []
             };
             res.send(success);
           })

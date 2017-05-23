@@ -13,7 +13,7 @@
       </div>
 
        <div id="askmore" class="modal">
-          <div class="modal-content">
+          <div class="modal-cont    console.log("Devo sloggare");ent">
             <h4>Un'ultima cosa!</h4>
             <p>Per utilizzare Athager&copy; devi inserire gli ultimi dati mancanti </p>
             <div class="container">
@@ -50,7 +50,7 @@
           </div>
         </div>
 
-      <div class="col s12 m9 l9">
+      <div class="content col s12 m9 l9">
         <h1><%= actions[actions.length-1].action %></h1>
   
           <%
@@ -65,12 +65,13 @@
                 <div class="card-content white-text">
                   <span class="card-title"><%= competition.description %></span>
                   <ul>
-                    <li class="scale"><%= competition.scale %></li>
-                    <li class="date"><%= competition.date %></li> 
+                    <li class="scale">Livello: <%= competition.scale %></li>
+                    <li class="date">Data: <%= competition.date %>/17</li> 
+                    <li class="location">Località: <%= competition.location %></li>
                   </ul>
                 </div>
                 <div class="card-action">
-                  <a data-code=<%= competition._id%>>Iscriviti</a>
+                  <a class="subscribe waves-effect" data-code=<%= competition._id%>>Iscriviti</a>
                 </div>
               </div>
          </div>

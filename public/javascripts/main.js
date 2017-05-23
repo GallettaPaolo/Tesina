@@ -6,10 +6,9 @@ $(document).ready(function () {
     draggable: true // Choose whether you can drag to open on touch screens
   });
   var socket = io.connect("http://localhost:3000");
-  console.log(socket);
-  gapi.load('auth2', function () {
+  /*gapi.load('auth2', function () {
     gapi.auth2.init();
-  });
+  });*/
 
   $.ajaxSetup({
     cache: true
@@ -23,6 +22,12 @@ $(document).ready(function () {
     $('select').material_select();
 
   $("#askmore").modal();
+
+ $(".subscribe").click(function(){
+   $.post("http://localhost:3000/subscribe",{
+     compId: $(this).data("code")
+    })
+ })
 
   if ($(".incomplete").data("incomplete"))
     $("#askmore").modal('open');
@@ -75,7 +80,7 @@ $(document).ready(function () {
           $(location).attr("href", "http://localhost:3000/")
         })
       } else {
-        $(location).attr("href", "http://locahost:3000/logout");
+        $(location).attr("href", "http://localhost:3000/logout");
       }
     }
 
