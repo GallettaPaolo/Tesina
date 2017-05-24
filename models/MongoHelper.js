@@ -98,7 +98,7 @@ function MongoHelper() {
   }
 
   var subscribe = (usrEmail, compId, userColl,subLen, callback) => {
-    userColl.updateOne({email:usrEmail},{$push:{subscriptions: new ObjectID(compId)}},(err,r)=>{
+    userColl.updateOne({email:usrEmail},{$push:{subscriptions: compId}},(err,r)=>{
       assert.equal(null, err);
       assert.equal(1, r.result.n);
       console.log(socketCallback);
@@ -168,8 +168,9 @@ function MongoHelper() {
    console.log(objectIds);
     MongoClient.connect(url,(err,db)=>{
       assert.equal(null,err);
-      getCompFromArray(ids,db,(competions)=>{
+      getCompFromArray(objectIds,db,(competitions)=>{
         db.close();
+        console.log("Gare iscrizioni: "+competitions);
         callback(competitions);
       })
     })

@@ -31,7 +31,6 @@ router.get('/main', (req, res) => {
 
   console.log(JSON.stringify(sess.user));
   mongoInstance.getActions((sess.user.isIncomplete) ? "Atleta" : sess.user.role, (acts) => {
-
     mongoInstance.getRoles((possibleRoles) => {
       mongoInstance.getAthleteCategory((possibleCategories) => {
         res.render('main', {
@@ -93,12 +92,10 @@ router.get("/competitions", (req, res) => {
 
 router.get("/subscriptions", (req, res) => {
   var sess = req.session;
-  mongoInstance.getUserByEmail(sess.user.email,(user)=>{
     mongoInstance.getCompetitionsWithinArray(sess.user.subscriptions,(competitions)=>{
           console.log(competitions);
           res.render('subscriptions');
     })
-  })
 
 })
 
@@ -106,7 +103,10 @@ router.post('/subscribe', (req, res) => {
   console.log("devo fare un iscrizione");
   var sess = req.session;
   mongoInstance.subscribeAthlete(sess.user.email, req.body.compId, (subscribed) => {
-    res.end();
+    mongoInstance.getUserByEmail(sess.user.email,(user)=>{
+        sess.user = user;
+        res.end();
+    })
   })
 })
 
