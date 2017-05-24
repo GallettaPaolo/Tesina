@@ -11,6 +11,7 @@ function MongoHelper() {
   /**
    * Campi privati
    */
+  var ObjectID = require('mongodb').ObjectID;
   var MongoClient = require('mongodb').MongoClient;
   var url = "mongodb://localhost:27017/athletics";
   var assert = require("assert");
@@ -97,7 +98,7 @@ function MongoHelper() {
   }
 
   var subscribe = (usrEmail, compId, userColl,subLen, callback) => {
-    userColl.updateOne({email:usrEmail},{$push:{subscriptions: compId}},(err,r)=>{
+    userColl.updateOne({email:usrEmail},{$push:{subscriptions: new ObjectID(compId)}},(err,r)=>{
       assert.equal(null, err);
       assert.equal(1, r.result.n);
       console.log(socketCallback);
@@ -155,6 +156,31 @@ function MongoHelper() {
     var scalesColl = db.collection("scale");
     scalesColl.find({}).toArray((err, arr) => {
       callback(arr)
+    })
+  }
+
+
+  this.getCompetitionsWithinArray= (ids,callback)=>{
+     var objectIds = [];
+    for(var i = 0; i < ids.length; i++){
+      objectIds.push(new ObjectID(ids[i]));
+    }
+   console.log(objectIds);
+    MongoClient.connect(url,(err,db)=>{
+      assert.equal(null,err);
+      getCompFromArray(ids,db,(competions)=>{
+        db.close();
+        callback(competitions);
+      })
+    })
+  }
+
+  var getCompFromArray = (ids,db,callback)=>{
+    var compColl = db.collection('competitions');
+    console.log(ids);
+    compColl.find({ _id: {$in:ids}}).toArray((err,arr)=>{
+      console.log(arr);
+      callback(arr);
     })
   }
 

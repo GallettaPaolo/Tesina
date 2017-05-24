@@ -6,9 +6,9 @@ $(document).ready(function () {
     draggable: true // Choose whether you can drag to open on touch screens
   });
   var socket = io.connect("http://localhost:3000");
-  console.log(socket);
-  socket.on("subscription",(data)=>{
-    console.log(data.tot);
+
+  socket.on("subscription", (data) => {
+    $("#iscrizioni").children(".badge").removeClass("hide");
     $("#iscrizioni").children('.badge').text(data.tot);
   })
   /*gapi.load('auth2', function () {
@@ -24,15 +24,24 @@ $(document).ready(function () {
       version: 'v2.7' // or v2.1, v2.2, v2.3, ...
     });
   });
-    $('select').material_select();
+  $('select').material_select();
 
   $("#askmore").modal();
 
- $(".subscribe").click(function(){
-   $.post("http://localhost:3000/subscribe",{
-     compId: $(this).data("code")
-    })
- })
+
+  $("#calendario").click(function () {
+    $.get("http://localhost:3000/competitions", (response) => {
+      $(".content").empty();
+      $(".content").append(response);
+      $(".subscribe").click(function () {
+        $.post("http://localhost:3000/subscribe", {
+          compId: $(this).data("code")
+        })
+      })
+    });
+  })
+
+  $("#calendario").trigger("click");
 
   if ($(".incomplete").data("incomplete"))
     $("#askmore").modal('open');
@@ -51,24 +60,30 @@ $(document).ready(function () {
     }
   })
 
-  $(".addInfo").click(()=>{
-    $.post("http://localhost:3000/addInfo",{
+  $(".addInfo").click(() => {
+    $.post("http://localhost:3000/addInfo", {
       email: $(".email").text().trim(),
-      fields: ["role","speciality"],
+      fields: ["role", "speciality"],
       values: [$(".rolesDiv input").val().trim(), $(".specDiv input").val().trim()]
-    },(response)=>{
+    }, (response) => {
       alert(response);
-      if(response)
-        $.get("http://localhost:3000/getActions?role="+values[0],(acts)=>{
-            alert(acts);
-            $(".actions").empty();
-            $(".actions").append('<li><a id="'+acts[0].action.toLowerCase()+'" class="waves-effect '+acts[0].action.toLowerCase()+'"><i class="material-icons"> '+acts[0].icon+'  </i>  '+acts[0].action+' </a></li>')
-            $.each(acts,(i,act)=>{
-              $(".actions").append('<li><a id="'+act.action.toLowerCase()+'" class="waves-effect '+act.action.toLowerCase()+'"><i class="material-icons"> '+act.icon+'  </i>  '+act.action+' </a></li>')
-            })
-            $(".actions").append('<li><a id="'+acts[acts.length-1].action.toLowerCase()+'" class="waves-effect '+acts[acts.length-1].action.toLowerCase()+'"><i class="material-icons"> '+acts[acts.length-1].icon+'  </i>  '+acts[acts.length-1].action+' </a></li>')
+      if (response)
+        $.get("http://localhost:3000/getActions?role=" + values[0], (acts) => {
+          alert(acts);
+          $(".actions").empty();
+          $(".actions").append('<li><a id="' + acts[0].action.toLowerCase() + '" class="waves-effect ' + acts[0].action.toLowerCase() + '"><i class="material-icons"> ' + acts[0].icon + '  </i>  ' + acts[0].action + ' </a></li>')
+          $.each(acts, (i, act) => {
+            $(".actions").append('<li><a id="' + act.action.toLowerCase() + '" class="waves-effect ' + act.action.toLowerCase() + '"><i class="material-icons"> ' + act.icon + '  </i>  ' + act.action + ' </a></li>')
+          })
+          $(".actions").append('<li><a id="' + acts[acts.length - 1].action.toLowerCase() + '" class="waves-effect ' + acts[acts.length - 1].action.toLowerCase() + '"><i class="material-icons"> ' + acts[acts.length - 1].icon + '  </i>  ' + acts[acts.length - 1].action + ' </a></li>')
         })
     })
+  })
+
+  $("#iscrizioni").click(function () {
+    $.get("http://localhost:3000/subscriptions", (response) => {
+      alert(response);
+    });
   })
 
   $(".logout").click(() => {

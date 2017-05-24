@@ -13,16 +13,16 @@ router.get('/', function (req, res, next) {
 router.get('/autoLog', (req, res) => {
   var sess = req.session;
   var tmpUser = JSON.parse(req.query.curUser);
-  mongoInstance.getUserByEmail(tmpUser.email,(user)=>{
+  mongoInstance.getUserByEmail(tmpUser.email, (user) => {
     sess.user = user;
     res.send('http://localhost:3000/main');
   })
-  
+
 });
 
 router.get('/main', (req, res) => {
   var sess = req.session;
-  console.log("Ruolo: "+sess.user.role);
+  console.log("Ruolo: " + sess.user.role);
   console.log(sess.user.role == undefined);
   if (sess.user.role == undefined || sess.user.role == null)
     sess.user.isIncomplete = true;
@@ -30,46 +30,45 @@ router.get('/main', (req, res) => {
     sess.user.isIncomplete = false;
 
   console.log(JSON.stringify(sess.user));
-  mongoInstance.getActions((sess.user.isIncomplete)?"Atleta":sess.user.role, (acts) => {
-    mongoInstance.getCompetitions((comp) => {
-      mongoInstance.getRoles((possibleRoles) => {
-        mongoInstance.getAthleteCategory((possibleCategories) => {
-          res.render('main', {
-            user: sess.user,
-            competitions: comp,
-            actions: acts,
-            roles: possibleRoles,
-            categories: possibleCategories
-          });
-        })
+  mongoInstance.getActions((sess.user.isIncomplete) ? "Atleta" : sess.user.role, (acts) => {
+
+    mongoInstance.getRoles((possibleRoles) => {
+      mongoInstance.getAthleteCategory((possibleCategories) => {
+        res.render('main', {
+          user: sess.user,
+          actions: acts,
+          roles: possibleRoles,
+          categories: possibleCategories
+        });
       })
     })
+
   });
 })
 
 
-router.post('/addInfo',(req,res)=>{
+router.post('/addInfo', (req, res) => {
   var sess = req.session;
   var fields = req.body.fields;
   var values = req.body.values;
   var fieldsToAdd = {};
-  for(var i = 0; i < fields.length; i++){
+  for (var i = 0; i < fields.length; i++) {
     fieldsToAdd[fields[i]] = values[i];
   }
 
-  mongoInstance.updateUser({email: req.body.email},fieldsToAdd,(updated)=>{
-    if(updated){
-      for(var i = 0; i < fields.length; i++){
-          sess.user[fields[i]] = values[i];
+  mongoInstance.updateUser({ email: req.body.email }, fieldsToAdd, (updated) => {
+    if (updated) {
+      for (var i = 0; i < fields.length; i++) {
+        sess.user[fields[i]] = values[i];
       }
       res.send(updated);
     }
   })
 })
 
-router.get('/getActions',(req,res)=>{
+router.get('/getActions', (req, res) => {
   var role = req.query.role;
-  mongoInstance.getActions(role,(acts)=>{
+  mongoInstance.getActions(role, (acts) => {
     res.send(acts);
   })
 })
@@ -85,10 +84,28 @@ router.get('/register', (req, res) => {
   });
 })
 
-router.post('/subscribe',(req,res)=>{
+router.get("/competitions", (req, res) => {
+  mongoInstance.getCompetitions((comp) => {
+    res.render('competitions',{competitions:comp});
+  })
+
+})
+
+router.get("/subscriptions", (req, res) => {
+  var sess = req.session;
+  mongoInstance.getUserByEmail(sess.user.email,(user)=>{
+    mongoInstance.getCompetitionsWithinArray(sess.user.subscriptions,(competitions)=>{
+          console.log(competitions);
+          res.render('subscriptions');
+    })
+  })
+
+})
+
+router.post('/subscribe', (req, res) => {
   console.log("devo fare un iscrizione");
   var sess = req.session;
-  mongoInstance.subscribeAthlete(sess.user.email,req.body.compId,(subscribed)=>{
+  mongoInstance.subscribeAthlete(sess.user.email, req.body.compId, (subscribed) => {
     res.end();
   })
 })

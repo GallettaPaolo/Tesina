@@ -19,13 +19,13 @@
       </div>
     </li>
 <div class="actions">
-    <li><a id=<%= actions[actions.length-1].action.toLowerCase()%> class="waves-effect <%= actions[0].action.toLowerCase() %>%>"><i class="material-icons"><%= actions[actions.length-1].icon %> </i> <span class="badge red"></span> <%= actions[actions.length-1].action %></a></li>
+    <li><a id=<%= actions[actions.length-1].action.toLowerCase()%> class="waves-effect <%= actions[0].action.toLowerCase() %>%>"><i class="material-icons"><%= actions[actions.length-1].icon %> </i> <span class="hide badge red"></span> <%= actions[actions.length-1].action %></a></li>
     <%
       actions.splice(0,actions.length -2).forEach((a)=>{
      %>
-      <li><a id=<%= a.action.toLowerCase() %> class="waves-effect <%= actions[0].action.toLowerCase() %>"><i class="material-icons"><%= a.icon %> </i> <span class="badge red white-text"></span> <%= a.action %></a></li>
+      <li><a id=<%= a.action.toLowerCase() %> class="waves-effect <%= a.action.toLowerCase() %>"><i class="material-icons"><%= a.icon %> </i> <span class="hide badge red white-text"></span> <%= a.action %></a></li>
       <%   }) %>
-        <li><a id=<%= actions[actions.length-2].action.toLowerCase()%> class="waves-effect <%= actions[0].action.toLowerCase() %>"><i class="material-icons"><%= actions[actions.length-2].icon %> </i> <span class="badge red"></span><%= actions[actions.length-2].action %></a></li>
+        <li><a id=<%= actions[actions.length-2].action.toLowerCase()%> class="waves-effect <%= actions[0].action.toLowerCase() %>"><i class="material-icons"><%= actions[actions.length-2].icon %> </i> <span class="hide badge red"></span><%= actions[actions.length-2].action %></a></li>
   </div>
   </ul>
 </header>
