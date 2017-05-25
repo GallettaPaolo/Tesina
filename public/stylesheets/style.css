@@ -13,6 +13,10 @@ nav ul a, nav .brand-logo {
   margin-left: 20px;
 }
 
+.fixed-action-btn{
+  position: fixed !important;
+}
+
 .welcome {
   position: absolute;
   top: 1px;

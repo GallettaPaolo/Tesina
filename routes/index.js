@@ -22,6 +22,13 @@ router.get("/subscriptions", (req, res) => {
 
 })
 
+router.get("/athleteGroup",(req,res)=>{
+  var sess = req.session;
+  res.render('athleteGroup',{
+    user: sess.user
+  });
+})
+
 
 router.get('/autoLog', (req, res) => {
   var sess = req.session;

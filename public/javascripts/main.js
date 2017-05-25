@@ -93,6 +93,15 @@ $(document).ready(function () {
     });
   })
 
+
+  $("#gruppo").click(function(){
+   $.get("http://localhost:3000/athleteGroup",(response)=>{
+      $(".content").empty();
+      $(".content").append(response);
+      $("#addGroup").modal();
+   })
+  })
+
   $(".logout").click(() => {
     if ($(".auth").data("auth") == "google") {
       var auth2 = gapi.auth2.getAuthInstance();
