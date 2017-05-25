@@ -61,6 +61,20 @@ if (app.get('env') === 'development') {
   });
 }
 
+app.use(function(req, res) {
+    res.status(404);
+    url = req.url;
+    res.render('error', {title: '404: File Not Found', url: url });
+});
+
+      // Handle 500
+app.use(function(error, req, res, next) {
+    res.status(500);
+    url = req.url;
+    console.log(JSON.stringify(error));
+    res.render('error', {title:'500: Internal Server Error', error: error, url: url});
+});
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development

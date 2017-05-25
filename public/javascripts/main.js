@@ -5,6 +5,9 @@ $(document).ready(function () {
     closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
     draggable: true // Choose whether you can drag to open on touch screens
   });
+
+  var date = new Date();
+
   var socket = io.connect("http://localhost:3000");
 
   socket.on("subscription", (data) => {
@@ -34,8 +37,10 @@ $(document).ready(function () {
       $(".content").empty();
       $(".content").append(response);
       $(".subscribe").click(function () {
+        console.log("Invio iscrizione");
         $.post("http://localhost:3000/subscribe", {
-          compId: $(this).data("code")
+          compId: $(this).data("code"),
+          data: date.getDate()+"/"+date.getMonth()+"/"+date.getUTCFullYear()
         })
       })
     });
@@ -82,7 +87,9 @@ $(document).ready(function () {
 
   $("#iscrizioni").click(function () {
     $.get("http://localhost:3000/subscriptions", (response) => {
-      alert(response);
+      $(".content").empty();
+      $(".content").append(response);
+      $('.collapsible').collapsible();
     });
   })
 

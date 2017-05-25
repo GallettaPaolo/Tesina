@@ -1,1 +1,35 @@
 <h1>Iscrizioni</h1>
+<ul class="collapsible popout" data-collapsible="accordion">
+    <% competitions.forEach(function(competition){ 
+        var subscription;
+        var found = false;
+        for(var i = 0; !found && i < subscriptions.length; i++){
+            if(subscriptions[i].competition == competition._id){
+                subscription = subscriptions[i];
+                found = true;
+            }
+        }
+        %>
+    <li class=<%= (subscription.accepted == undefined || subscription.accepted == null)? "yellow-text":"green-text" %>>
+        <div class="collapsible-header"><i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null)?"schedule":"done" %></i><%= competition.description  %></div>
+        <div class="collapsible-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data Gara</th>
+                        <th>Richiesta Iscrizione</th>
+                        <th>Accettata Iscrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><%= competition.date %></td>
+                        <td><%= subscription.dateRequest %></td>
+                        <td><%= (subscription.accepted == undefined || subscription.accepted == null )?"/":subscription.accepted %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </li>
+    <% }) %>
+</ul>

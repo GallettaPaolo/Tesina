@@ -68,21 +68,21 @@ function MongoHelper() {
     });
   }
 
-  this.subscribeAthlete = (usrEmail, compId, callback) => {
+  this.subscribeAthlete = (usrEmail, compId,data, callback) => {
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);
       var userColl = db.collection('users');
       userColl.find({ email: usrEmail }).toArray((err, arr) => {
         if (arr[0].subscriptions == undefined || arr[0].subscriptions == null)
           updatingUser(userColl, db, { email: usrEmail }, { subscriptions: [] }, (updated) => {
-            subscribe(usrEmail, compId, userColl,0, (subscribed) => {
+            subscribe(usrEmail, compId,data, userColl,0, (subscribed) => {
               db.close();
               callback(subscribed);
             })
           })
         else {
           if(arr[0].subscriptions.indexOf(compId) == -1)
-            subscribe(usrEmail, compId, userColl,arr[0].subscriptions.length, (subscribed) => {
+            subscribe(usrEmail, compId,data, userColl,arr[0].subscriptions.length, (subscribed) => {
               db.close();
               callback(subscribed);
             })
@@ -97,8 +97,8 @@ function MongoHelper() {
     })
   }
 
-  var subscribe = (usrEmail, compId, userColl,subLen, callback) => {
-    userColl.updateOne({email:usrEmail},{$push:{subscriptions: compId}},(err,r)=>{
+  var subscribe = (usrEmail, compId,data, userColl,subLen, callback) => {
+    userColl.updateOne({email:usrEmail},{$push:{subscriptions: {competition: compId, dateRequest: data }}},(err,r)=>{
       assert.equal(null, err);
       assert.equal(1, r.result.n);
       console.log(socketCallback);
@@ -163,14 +163,13 @@ function MongoHelper() {
   this.getCompetitionsWithinArray= (ids,callback)=>{
      var objectIds = [];
     for(var i = 0; i < ids.length; i++){
-      objectIds.push(new ObjectID(ids[i]));
+      objectIds.push(new ObjectID(ids[i].competition));
     }
    console.log(objectIds);
     MongoClient.connect(url,(err,db)=>{
       assert.equal(null,err);
       getCompFromArray(objectIds,db,(competitions)=>{
         db.close();
-        console.log("Gare iscrizioni: "+competitions);
         callback(competitions);
       })
     })
@@ -178,9 +177,7 @@ function MongoHelper() {
 
   var getCompFromArray = (ids,db,callback)=>{
     var compColl = db.collection('competitions');
-    console.log(ids);
     compColl.find({ _id: {$in:ids}}).toArray((err,arr)=>{
-      console.log(arr);
       callback(arr);
     })
   }

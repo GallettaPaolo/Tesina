@@ -10,6 +10,19 @@ router.get('/', function (req, res, next) {
   });
 });
 
+
+router.get("/subscriptions", (req, res) => {
+  var sess = req.session;
+  mongoInstance.getCompetitionsWithinArray(sess.user.subscriptions,(comp)=>{
+    res.render('subscriptions',{
+      subscriptions:sess.user.subscriptions,
+      competitions: comp
+    });
+  })
+
+})
+
+
 router.get('/autoLog', (req, res) => {
   var sess = req.session;
   var tmpUser = JSON.parse(req.query.curUser);
@@ -85,27 +98,17 @@ router.get('/register', (req, res) => {
 
 router.get("/competitions", (req, res) => {
   mongoInstance.getCompetitions((comp) => {
-    res.render('competitions',{competitions:comp});
+    res.render('competitions', { competitions: comp });
   })
 
 })
-
-router.get("/subscriptions", (req, res) => {
-  var sess = req.session;
-    mongoInstance.getCompetitionsWithinArray(sess.user.subscriptions,(competitions)=>{
-          console.log(competitions);
-          res.render('subscriptions');
-    })
-
-})
-
 router.post('/subscribe', (req, res) => {
   console.log("devo fare un iscrizione");
   var sess = req.session;
   mongoInstance.subscribeAthlete(sess.user.email, req.body.compId, (subscribed) => {
-    mongoInstance.getUserByEmail(sess.user.email,(user)=>{
-        sess.user = user;
-        res.end();
+    mongoInstance.getUserByEmail(sess.user.email, (user) => {
+      sess.user = user;
+      res.end();
     })
   })
 })
