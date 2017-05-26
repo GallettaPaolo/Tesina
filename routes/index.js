@@ -129,7 +129,13 @@ router.post("/addAthletes",(req,res)=>{
   var sess = req.session;
   var user = sess.user;
   mongoInstance.addAthletesToTrainer(req.body.athletes,user,(added)=>{
-    console.log(added);
+    mongoInstance.getUserByEmail(user.email,(updatedUser)=>{
+      sess.user = updatedUser;
+      mongoInstance.setAthletesTrainer(req.body.athletes,user,(set)=>{
+        if(set)
+          res.send(set);
+      })
+    })
   })
 })
 

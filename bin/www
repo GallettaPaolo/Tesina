@@ -43,7 +43,6 @@ io.on('connection', (socket) => {
   socket.emit("prova");
   mongoInstance.setCallback((e,d)=>{  //Funzione di callback che viene richiamata ogni volta che è necessaria una modifica in realtime con l'utente
   console.log("Evento: "+e);
-  console.log(socket);
   console.log(JSON.stringify(d));
     socket.emit(e,d)
     console.log("Ho inviato in broadcast l'evento");

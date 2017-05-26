@@ -146,14 +146,63 @@ function MongoHelper() {
 
   var addAthletesIntoTrainer = (idsAthletes, user, db, callback) => {
     var userColl = db.collection('users');
-
-    userColl.update({ _id: user._id }, { $push: { athletes: idsAthletes } }, (err, r) => {
+    userColl.update({ email: user.email }, { $push: { athletes: { $each: idsAthletes } } }, (err, r) => {
       console.log("Errore: " + err);
       console.log("Risultato: " + r)
       assert.equal(err, null);
       assert.equal(1, r.result.n);
       callback(true);
     });
+  }
+
+  this.setAthletesTrainer = (idsAthletes, user, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      setTrainer(idsAthletes, user, db, (set) => {
+        db.close();
+        callback(set);
+      })
+    })
+  }
+
+  var setTrainer = (idsAthletes, user, db, callback) => {
+    var userColl = db.collection('users');
+    var objectIds = [];
+    for (var i = 0; i < idsAthletes.length; i++)
+      objectIds.push(new ObjectID(idsAthletes[i]));
+
+    userColl.updateMany({ _id: { $in: objectIds } }, { $set: { trainer: user._id } }, (err, r) => {
+      assert.equal(err, null);
+      assert.equal(objectIds.length, r.result.n);
+      getAthletesIdArray(idsAthletes,userColl,(athletes)=>{
+        socketCallback("trainer-set",athletes)
+        callback(true);
+      })
+ 
+    })
+  }
+
+  this.getAthletesWithIds = (athletesId,callback)=>{
+    MongoClient.connect(url,(err,db)=>{
+      assert.equal(null,err);
+      var userColl = db.collection('users');
+      getAthletesIdArray(athletesId,userColl, (athletes)=>{
+        db.close();
+        console.log(athletes);
+        callback(athletes);
+      })
+    })
+  }
+
+  var getAthletesIdArray = (athletesId,userColl, callback)=>{
+    var objectIds = [];
+    for(var i = 0; i < athletesId.length; i++){
+      objectIds.push(new ObjectID(athletesId[i]));
+    }
+    userColl.find({id:{$in: objectIds}}).toArray((err,arr)=>{
+      assert.equal(null,err);
+      callback(arr);
+    })
   }
 
   this.getCompetitions = (callback) => {
