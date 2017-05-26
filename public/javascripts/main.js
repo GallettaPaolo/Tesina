@@ -113,8 +113,14 @@ $(document).ready(function () {
           }, this);
           $("#addGroup").modal('open')
           $("#addGroup .modal-action").click(function(){
+            var idsAthletes = [];
            $("#addGroup .modal-content ul li .secondary-content input:checked").each(function(element){
-              alert($(this).attr("id"));
+              idsAthletes.push($(this).attr("id"));
+           })
+           $.post("http://localhost:3000/addAthletes",{
+             athletes: idsAthletes
+           },(response)=>{
+             alert(response);
            })
           })
         })

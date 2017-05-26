@@ -26,19 +26,19 @@ function MongoHelper() {
     socketCallback = callback;
   }
 
-  this.getUserWithoutTrainer = (callback)=>{
-    MongoClient.connect(url,(err,db)=>{
-      assert.equal(null,err);
-      findUserWithoutTrainer(db,(users)=>{
+  this.getUserWithoutTrainer = (callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      findUserWithoutTrainer(db, (users) => {
         db.close();
         callback(users);
       })
     })
   }
 
-  var findUserWithoutTrainer = (db,callback)=>{
+  var findUserWithoutTrainer = (db, callback) => {
     var userColl = db.collection('users');
-    userColl.find({$and:[{role:"Atleta"}, {$or:[{allenatore: undefined},{allenatore: null}]}]}).toArray((err,arr)=>{
+    userColl.find({ $and: [{ role: "Atleta" }, { $or: [{ allenatore: undefined }, { allenatore: null }] }] }).toArray((err, arr) => {
       callback(arr);
     })
   }
@@ -85,26 +85,26 @@ function MongoHelper() {
     });
   }
 
-  this.subscribeAthlete = (usrEmail, compId,data, callback) => {
+  this.subscribeAthlete = (usrEmail, compId, data, callback) => {
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);
       var userColl = db.collection('users');
       userColl.find({ email: usrEmail }).toArray((err, arr) => {
         if (arr[0].subscriptions == undefined || arr[0].subscriptions == null)
           updatingUser(userColl, db, { email: usrEmail }, { subscriptions: [] }, (updated) => {
-            subscribe(usrEmail, compId,data, userColl,0, (subscribed) => {
+            subscribe(usrEmail, compId, data, userColl, 0, (subscribed) => {
               db.close();
               callback(subscribed);
             })
           })
         else {
-          if(arr[0].subscriptions.indexOf(compId) == -1)
-            subscribe(usrEmail, compId,data, userColl,arr[0].subscriptions.length, (subscribed) => {
+          if (arr[0].subscriptions.indexOf(compId) == -1)
+            subscribe(usrEmail, compId, data, userColl, arr[0].subscriptions.length, (subscribed) => {
               db.close();
               callback(subscribed);
             })
-          else{
-  
+          else {
+
             db.close();
             callback(true);
           }
@@ -114,15 +114,46 @@ function MongoHelper() {
     })
   }
 
-  var subscribe = (usrEmail, compId,data, userColl,subLen, callback) => {
-    userColl.updateOne({email:usrEmail},{$push:{subscriptions: {competition: compId, dateRequest: data }}},(err,r)=>{
+  var subscribe = (usrEmail, compId, data, userColl, subLen, callback) => {
+    userColl.updateOne({ email: usrEmail }, { $push: { subscriptions: { competition: compId, dateRequest: data } } }, (err, r) => {
       assert.equal(null, err);
       assert.equal(1, r.result.n);
       console.log(socketCallback);
-      socketCallback("subscription",{tot: subLen+1});
+      socketCallback("subscription", { tot: subLen + 1 });
       callback(true);
     })
 
+  }
+
+  this.addAthletesToTrainer = (idsAthlete, user, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      if (user.athletes == undefined || user.athletes == null) {
+        updatingUser(db.collection('users'), db, { email: user.email }, { athletes: [] }, (updated) => {
+          addAthletesIntoTrainer(idsAthlete, user, db, (added) => {
+            db.close();
+            callback(added);
+          })
+        })
+      } else {
+        addAthletesIntoTrainer(idsAthlete, user, db, (added) => {
+          db.close();
+          callback(added);
+        })
+      }
+    })
+  }
+
+  var addAthletesIntoTrainer = (idsAthletes, user, db, callback) => {
+    var userColl = db.collection('users');
+
+    userColl.update({ _id: user._id }, { $push: { athletes: idsAthletes } }, (err, r) => {
+      console.log("Errore: " + err);
+      console.log("Risultato: " + r)
+      assert.equal(err, null);
+      assert.equal(1, r.result.n);
+      callback(true);
+    });
   }
 
   this.getCompetitions = (callback) => {
@@ -152,7 +183,7 @@ function MongoHelper() {
           })
 
           if (scales[index] == undefined)
-          elem.scale = scales[index].name;
+            elem.scale = scales[index].name;
         })
         callback(competitions);
       })
@@ -177,43 +208,43 @@ function MongoHelper() {
   }
 
 
-  this.getCompetitionsWithinArray= (ids,callback)=>{
-     var objectIds = [];
-    for(var i = 0; i < ids.length; i++){
+  this.getCompetitionsWithinArray = (ids, callback) => {
+    var objectIds = [];
+    for (var i = 0; i < ids.length; i++) {
       objectIds.push(new ObjectID(ids[i].competition));
     }
-   console.log(objectIds);
-    MongoClient.connect(url,(err,db)=>{
-      assert.equal(null,err);
-      getCompFromArray(objectIds,db,(competitions)=>{
+    console.log(objectIds);
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      getCompFromArray(objectIds, db, (competitions) => {
         db.close();
         callback(competitions);
       })
     })
   }
 
-  var getCompFromArray = (ids,db,callback)=>{
+  var getCompFromArray = (ids, db, callback) => {
     var compColl = db.collection('competitions');
-    compColl.find({ _id: {$in:ids}}).toArray((err,arr)=>{
+    compColl.find({ _id: { $in: ids } }).toArray((err, arr) => {
       callback(arr);
     })
   }
 
 
-  this.getUserByEmail = (email,callback)=>{
-    MongoClient.connect(url,(err,db)=>{
-      assert.equal(null,err);
+  this.getUserByEmail = (email, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
       var userColl = db.collection('users');
-      getUserFromEmail(email,userColl,(user)=>{
+      getUserFromEmail(email, userColl, (user) => {
         db.close();
         callback(user);
       })
     })
   }
 
-  var getUserFromEmail = (email,userColl,callback)=>{
-    userColl.find({email: email}).toArray((err,arr)=>{
-      assert.equal(null,err);
+  var getUserFromEmail = (email, userColl, callback) => {
+    userColl.find({ email: email }).toArray((err, arr) => {
+      assert.equal(null, err);
       callback(arr[0]);
     })
   }
@@ -314,7 +345,7 @@ function MongoHelper() {
  * Funzione che viene esportata (Viene utilizzare per il pattern singleton)
  */
 module.exports = function getHelper() {
-  if (singleton == null) 
+  if (singleton == null)
     singleton = new MongoHelper();
   return singleton;
 }

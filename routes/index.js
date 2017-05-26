@@ -125,6 +125,14 @@ router.post('/subscribe', (req, res) => {
   })
 })
 
+router.post("/addAthletes",(req,res)=>{
+  var sess = req.session;
+  var user = sess.user;
+  mongoInstance.addAthletesToTrainer(req.body.athletes,user,(added)=>{
+    console.log(added);
+  })
+})
+
 router.get('/logout', function (req, res) {
   req.logout();
   req.session.destroy();
