@@ -40,7 +40,7 @@ $(document).ready(function () {
         console.log("Invio iscrizione");
         $.post("http://localhost:3000/subscribe", {
           compId: $(this).data("code"),
-          data: date.getDate()+"/"+date.getMonth()+"/"+date.getUTCFullYear()
+          data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
         })
       })
     });
@@ -94,12 +94,32 @@ $(document).ready(function () {
   })
 
 
-  $("#gruppo").click(function(){
-   $.get("http://localhost:3000/athleteGroup",(response)=>{
+  $("#gruppo").click(function () {
+    $.get("http://localhost:3000/athleteGroup", (response) => {
       $(".content").empty();
       $(".content").append(response);
-      $("#addGroup").modal();
-   })
+      $("#addGroup").modal()
+      $(".addGroup").click(function () {
+        $(".athletes").empty();
+        $.get("http://localhost:3000/allAthletes", (response) => {
+          response.forEach(function (element) {
+            $(".athletes").append(
+              '<li class="collection-item avatar">'
+              + ' <img src="'+element.imgUrl+'" alt="" class="circle">'
+              + ' <p>'+element.name+' <br>'+element.surname+'</p>'
+              +'  <p href="#!" class="secondary-content"><input id="'+element._id+'" type="checkbox" /><label for="'+element._id+'"></label></p>'
+              +'</li>'
+            );
+          }, this);
+          $("#addGroup").modal('open')
+          $("#addGroup .modal-action").click(function(){
+           $("#addGroup .modal-content ul li .secondary-content input:checked").each(function(element){
+              alert($(this).attr("id"));
+           })
+          })
+        })
+      })
+    })
   })
 
   $(".logout").click(() => {

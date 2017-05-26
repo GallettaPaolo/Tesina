@@ -26,6 +26,23 @@ function MongoHelper() {
     socketCallback = callback;
   }
 
+  this.getUserWithoutTrainer = (callback)=>{
+    MongoClient.connect(url,(err,db)=>{
+      assert.equal(null,err);
+      findUserWithoutTrainer(db,(users)=>{
+        db.close();
+        callback(users);
+      })
+    })
+  }
+
+  var findUserWithoutTrainer = (db,callback)=>{
+    var userColl = db.collection('users');
+    userColl.find({$and:[{role:"Atleta"}, {$or:[{allenatore: undefined},{allenatore: null}]}]}).toArray((err,arr)=>{
+      callback(arr);
+    })
+  }
+
   this.updateUser = (filter, data, callback) => {
     MongoClient.connect(url, function (err, db) {
       assert.equal(null, err);

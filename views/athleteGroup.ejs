@@ -2,46 +2,18 @@
 
 <% if(user.athletes == undefined || user.athletes == null || user.athletes.length == 0){%>
     <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
-    <a class="waves-effect waves-light btn" href="#addGroup">Aggiungi un gruppo</a>
+    <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi un gruppo</a>
     <div id="addGroup" class="modal bottom-sheet">
         <div class="modal-header">
             <h2>Scegli chi aggiungere al gruppo</h2>
         </div>
         <div class="modal-content">
-            <ul class="collection">
-                <li class="collection-item avatar">
-                    <img src="images/yuna.jpg" alt="" class="circle">
-                    <span class="title">Title</span>
-                    <p>First Line <br> Second Line
-                    </p>
-                    <p class="secondary-content"><input type="checkbox" id="test5" />
-      <label for="test5">Red</label></a>
-                </li>
-                <li class="collection-item avatar">
-                    <i class="material-icons circle">folder</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br> Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                    <i class="material-icons circle green">insert_chart</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br> Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                    <i class="material-icons circle red">play_arrow</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br> Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
+            <ul class="athletes collection">
+               
             </ul>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aggiungi</a>
         </div>
     </div>
     <%} %>
