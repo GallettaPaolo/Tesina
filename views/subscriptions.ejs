@@ -10,7 +10,7 @@
             }
         }
         %>
-    <li class=<%= (subscription.accepted == undefined || subscription.accepted == null)? "yellow-text":"green-text" %>>
+    <li>
         <div class="collapsible-header"><i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null)?"schedule":"done" %></i><%= competition.description  %></div>
         <div class="collapsible-body">
             <table>

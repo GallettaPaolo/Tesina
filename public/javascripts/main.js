@@ -9,7 +9,6 @@ $(document).ready(function () {
   var date = new Date();
 
   var socket = io.connect("http://localhost:3000");
-
   socket.on("subscription", (data) => {
     $("#iscrizioni").children(".badge").removeClass("hide");
     $("#iscrizioni").children('.badge').text(data.tot);

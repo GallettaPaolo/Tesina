@@ -29,9 +29,13 @@ router.get("/allAthletes", (req, res) => {
 
 router.get("/athleteGroup", (req, res) => {
   var sess = req.session;
-  res.render('athleteGroup', {
-    user: sess.user
-  });
+  mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
+    console.log(aths);
+    res.render('athleteGroup', {
+      user: sess.user,
+      athletes: aths
+    });
+  })
 })
 
 
@@ -117,7 +121,7 @@ router.get("/competitions", (req, res) => {
 router.post('/subscribe', (req, res) => {
   console.log("devo fare un iscrizione");
   var sess = req.session;
-  mongoInstance.subscribeAthlete(sess.user.email, req.body.compId,req.body.data, (subscribed) => {
+  mongoInstance.subscribeAthlete(sess.user.email, req.body.compId, req.body.data, (subscribed) => {
     mongoInstance.getUserByEmail(sess.user.email, (user) => {
       sess.user = user;
       res.end();
@@ -125,14 +129,14 @@ router.post('/subscribe', (req, res) => {
   })
 })
 
-router.post("/addAthletes",(req,res)=>{
+router.post("/addAthletes", (req, res) => {
   var sess = req.session;
   var user = sess.user;
-  mongoInstance.addAthletesToTrainer(req.body.athletes,user,(added)=>{
-    mongoInstance.getUserByEmail(user.email,(updatedUser)=>{
+  mongoInstance.addAthletesToTrainer(req.body.athletes, user, (added) => {
+    mongoInstance.getUserByEmail(user.email, (updatedUser) => {
       sess.user = updatedUser;
-      mongoInstance.setAthletesTrainer(req.body.athletes,user,(set)=>{
-        if(set)
+      mongoInstance.setAthletesTrainer(req.body.athletes, user, (set) => {
+        if (set)
           res.send(set);
       })
     })

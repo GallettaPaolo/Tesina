@@ -188,7 +188,6 @@ function MongoHelper() {
       var userColl = db.collection('users');
       getAthletesIdArray(athletesId,userColl, (athletes)=>{
         db.close();
-        console.log(athletes);
         callback(athletes);
       })
     })
@@ -199,7 +198,7 @@ function MongoHelper() {
     for(var i = 0; i < athletesId.length; i++){
       objectIds.push(new ObjectID(athletesId[i]));
     }
-    userColl.find({id:{$in: objectIds}}).toArray((err,arr)=>{
+    userColl.find({_id:{$in: objectIds}}).toArray((err,arr)=>{
       assert.equal(null,err);
       callback(arr);
     })
