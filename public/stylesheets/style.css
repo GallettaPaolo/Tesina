@@ -13,6 +13,13 @@ nav ul a, nav .brand-logo {
   margin-left: 20px;
 }
 
+.reduceSize{
+  width:60px;
+  height: 60px;
+  margin-top: 8px;
+  margin-bottom: -9px;
+}
+
 .fixed-action-btn{
   position: fixed !important;
 }

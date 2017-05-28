@@ -98,29 +98,30 @@ $(document).ready(function () {
       $(".content").empty();
       $(".content").append(response);
       $("#addGroup").modal()
+      $('.collapsible').collapsible();
       $(".addGroup").click(function () {
         $(".athletes").empty();
         $.get("http://localhost:3000/allAthletes", (response) => {
           response.forEach(function (element) {
             $(".athletes").append(
               '<li class="collection-item avatar">'
-              + ' <img src="'+element.imgUrl+'" alt="" class="circle">'
-              + ' <p>'+element.name+' <br>'+element.surname+'</p>'
-              +'  <p href="#!" class="secondary-content"><input id="'+element._id+'" type="checkbox" /><label for="'+element._id+'"></label></p>'
-              +'</li>'
+              + ' <img src="' + element.imgUrl + '" alt="" class="circle">'
+              + ' <p>' + element.name + ' <br>' + element.surname + '</p>'
+              + '  <p href="#!" class="secondary-content"><input id="' + element._id + '" type="checkbox" /><label for="' + element._id + '"></label></p>'
+              + '</li>'
             );
           }, this);
           $("#addGroup").modal('open')
-          $("#addGroup .modal-action").click(function(){
+          $("#addGroup .modal-action").click(function () {
             var idsAthletes = [];
-           $("#addGroup .modal-content ul li .secondary-content input:checked").each(function(element){
+            $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
               idsAthletes.push($(this).attr("id"));
-           })
-           $.post("http://localhost:3000/addAthletes",{
-             athletes: idsAthletes
-           },(response)=>{
-             alert(response);
-           })
+            })
+            $.post("http://localhost:3000/addAthletes", {
+              athletes: idsAthletes
+            }, (response) => {
+              alert(response);
+            })
           })
         })
       })

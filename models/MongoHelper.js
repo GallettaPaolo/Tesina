@@ -31,6 +31,7 @@ function MongoHelper() {
       assert.equal(null, err);
       findUserWithoutTrainer(db, (users) => {
         db.close();
+        console.log("Utenti: "+JSON.stringify(users));
         callback(users);
       })
     })
@@ -38,7 +39,7 @@ function MongoHelper() {
 
   var findUserWithoutTrainer = (db, callback) => {
     var userColl = db.collection('users');
-    userColl.find({ $and: [{ role: "Atleta" }, { $or: [{ allenatore: undefined }, { allenatore: null }] }] }).toArray((err, arr) => {
+    userColl.find({ role: "Atleta" ,  $or: [{ trainer: undefined }, { trainer: null }]  }).toArray((err, arr) => {
       callback(arr);
     })
   }

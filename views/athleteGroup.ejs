@@ -2,7 +2,8 @@
 
 <% if(user.athletes == undefined || user.athletes == null || user.athletes.length == 0){%>
     <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
-    <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi un gruppo</a>
+ <%} else{%>
+    <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi al gruppo</a>
     <div id="addGroup" class="modal bottom-sheet">
         <div class="modal-header">
             <h2>Scegli chi aggiungere al gruppo</h2>
@@ -16,12 +17,31 @@
             <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aggiungi</a>
         </div>
     </div>
-    <%} else{%>
+   
         <ul class="collapsible popout" data-collapsible="accordion">
             <% athletes.forEach(function(athlete){ %>
                 <li>
-                    <div class="collapsible-header"><img class="circle" src=<%= athlete.imgUrl %> /> <%= athlete.name +" " + athlete.surname  %></div>
+                    <div class="collapsible-header"><img class="reduceSize circle" src=<%= athlete.imgUrl %> /> <%= athlete.name +" " + athlete.surname  %></div>
                     <div class="collapsible-body">
+                        <div class="row">
+                            <div class="col s12 m2 l3">
+                                <span>Nome: <%= athlete.name%></span>
+                            </div>
+                            <div class="col s12 m2 l3">
+                                <span>Cognome: <%= athlete.surname%></span>
+                            </div>
+                            <div class="col s12 m2 l3">
+                                <span>Email: <%= athlete.email%></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 m4 l4">
+                                <span>Specialità: <%= athlete.speciality%></span>
+                            </div>
+                            <div class="col s12 m5 l5">
+                                <span>Numero richieste iscrizioni:<%= athlete.subscriptions.length%></span>
+                            </div>
+                        </div>
                     </div>
                 </li>
                 <% }) %>

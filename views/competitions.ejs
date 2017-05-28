@@ -25,7 +25,7 @@
                             </ul>
                         </div>
                         <div class="card-action">
-                            <a class="subscribe waves-effect" data-code=<%= competition._id%>>Iscriviti</a>
+                            <a class="subscribe waves-effect" data-code=<%= competition._id%>> <%= (role=="Allenatore")?"Iscrivi":"Iscriviti" %> </a>
                         </div>
                     </div>
                 </div>
@@ -35,3 +35,5 @@
         </div>
         <%} %>
             <% }) %>
+
+            <%if(role == "Allenatore")%>
