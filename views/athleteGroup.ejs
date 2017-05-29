@@ -1,23 +1,8 @@
 <h1>Gruppo di atleti:</h1>
-
-<% if(user.athletes == undefined || user.athletes == null || user.athletes.length == 0){%>
     <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
- <%} else{%>
     <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi al gruppo</a>
-    <div id="addGroup" class="modal bottom-sheet">
-        <div class="modal-header">
-            <h2>Scegli chi aggiungere al gruppo</h2>
-        </div>
-        <div class="modal-content">
-            <ul class="athletes collection">
+<% if(user.athletes != undefined || user.athletes != null || user.athletes.length != 0){%>
 
-            </ul>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aggiungi</a>
-        </div>
-    </div>
-   
         <ul class="collapsible popout" data-collapsible="accordion">
             <% athletes.forEach(function(athlete){ %>
                 <li>

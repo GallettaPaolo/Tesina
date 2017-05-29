@@ -60,7 +60,7 @@
       <% if(user.role == "Allenatore") {%>
         <div class="fixed fixed-action-btn">
           <a class="btn-floating btn-large red">
-        <i class="large material-icons">mode_edit</i>
+        <i class="large material-icons">add</i>
       </a>
           <ul>
             <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
@@ -71,7 +71,20 @@
         </div>
 
         <% }%>
-        <span class="hide"><%= user.role%></span>
+
+          <div id="addGroup" class="modal bottom-sheet">
+            <div class="modal-header">
+              <h2>Scegli chi aggiungere al gruppo</h2>
+            </div>
+            <div class="modal-content">
+              <ul class="athletes collection">
+
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aggiungi</a>
+            </div>
+          </div>
   </body>
 
 </html>

@@ -92,7 +92,6 @@ $(document).ready(function () {
     });
   })
 
-
   $("#gruppo").click(function () {
     $.get("http://localhost:3000/athleteGroup", (response) => {
       $(".content").empty();
@@ -120,13 +119,16 @@ $(document).ready(function () {
             $.post("http://localhost:3000/addAthletes", {
               athletes: idsAthletes
             }, (response) => {
-              alert(response);
+              if(response)
+                $("#gruppo").trigger("click");
             })
           })
         })
       })
     })
   })
+
+  $(".subscribeAthlete")
 
   $(".logout").click(() => {
     if ($(".auth").data("auth") == "google") {
