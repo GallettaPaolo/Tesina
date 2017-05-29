@@ -1,7 +1,7 @@
 <h1>Gruppo di atleti:</h1>
     <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
     <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi al gruppo</a>
-<% if(user.athletes != undefined || user.athletes != null || user.athletes.length != 0){%>
+    <% if(athletes != undefined || athletes != null || athletes.length != 0){%>
 
         <ul class="collapsible popout" data-collapsible="accordion">
             <% athletes.forEach(function(athlete){ %>
@@ -24,7 +24,7 @@
                                 <span>Specialità: <%= athlete.speciality%></span>
                             </div>
                             <div class="col s12 m5 l5">
-                                <span>Numero richieste iscrizioni:<%= athlete.subscriptions.length%></span>
+                                <span><%= (athlete.subscriptions != undefined)?"Numero richieste iscrizioni: "+athlete.subscriptions.length: "Non ha ancora alcuna iscrizione"%></span>
                             </div>
                         </div>
                     </div>

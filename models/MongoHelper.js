@@ -31,7 +31,7 @@ function MongoHelper() {
       assert.equal(null, err);
       findUserWithoutTrainer(db, (users) => {
         db.close();
-        console.log("Utenti: "+JSON.stringify(users));
+        console.log("Utenti: " + JSON.stringify(users));
         callback(users);
       })
     })
@@ -39,7 +39,7 @@ function MongoHelper() {
 
   var findUserWithoutTrainer = (db, callback) => {
     var userColl = db.collection('users');
-    userColl.find({ role: "Atleta" ,  $or: [{ trainer: undefined }, { trainer: null }]  }).toArray((err, arr) => {
+    userColl.find({ role: "Atleta", $or: [{ trainer: undefined }, { trainer: null }] }).toArray((err, arr) => {
       callback(arr);
     })
   }
@@ -175,32 +175,65 @@ function MongoHelper() {
     userColl.updateMany({ _id: { $in: objectIds } }, { $set: { trainer: user._id } }, (err, r) => {
       assert.equal(err, null);
       assert.equal(objectIds.length, r.result.n);
-      getAthletesIdArray(idsAthletes,userColl,(athletes)=>{
-        socketCallback("trainer-set",athletes)
+      getAthletesIdArray(idsAthletes, userColl, (athletes) => {
+        socketCallback("trainer-set", athletes)
         callback(true);
       })
- 
+
     })
   }
 
-  this.getAthletesWithIds = (athletesId,callback)=>{
-    MongoClient.connect(url,(err,db)=>{
-      assert.equal(null,err);
+  this.subscribeAthletes = (idsAthletes, competition, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
       var userColl = db.collection('users');
-      getAthletesIdArray(athletesId,userColl, (athletes)=>{
+      userColl.find({ email: usrEmail }).toArray((err, arr) => {
+        arr.forEach(function (elem) {
+          if (elem.subscriptions == undefined || elem.subscriptions == null)
+            updatingUser(userColl, db, { email: usrEmail }, { subscriptions: [] }, (updated) => {
+              subscribe(usrEmail, compId, data, userColl, 0, (subscribed) => {
+                db.close();
+                callback(subscribed);
+              })
+            })
+          else {
+            if (elem.subscriptions.indexOf(compId) == -1)
+              subscribe(usrEmail, compId, data, userColl, elem.subscriptions.length, (subscribed) => {
+                db.close();
+                callback(subscribed);
+              })
+            else {
+
+              db.close();
+              callback(true);
+            }
+          }
+        })
+
+      })
+    })
+  }
+
+  var subscribeMultipleAthletes = (idsAthletes,competition)
+
+  this.getAthletesWithIds = (athletesId, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      var userColl = db.collection('users');
+      getAthletesIdArray(athletesId, userColl, (athletes) => {
         db.close();
         callback(athletes);
       })
     })
   }
 
-  var getAthletesIdArray = (athletesId,userColl, callback)=>{
+  var getAthletesIdArray = (athletesId, userColl, callback) => {
     var objectIds = [];
-    for(var i = 0; i < athletesId.length; i++){
+    for (var i = 0; i < athletesId.length; i++) {
       objectIds.push(new ObjectID(athletesId[i]));
     }
-    userColl.find({_id:{$in: objectIds}}).toArray((err,arr)=>{
-      assert.equal(null,err);
+    userColl.find({ _id: { $in: objectIds } }).toArray((err, arr) => {
+      assert.equal(null, err);
       callback(arr);
     })
   }

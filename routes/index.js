@@ -27,10 +27,16 @@ router.get("/allAthletes", (req, res) => {
   })
 })
 
+router.get("/getTrainerAthletes",(req,res)=>{
+  var sess = req.session;
+  mongoInstance.getAthletesWithIds(sess.user.athletes,(aths)=>{
+    res.send(aths);
+  })
+})
+
 router.get("/athleteGroup", (req, res) => {
   var sess = req.session;
   mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
-    console.log(aths);
     res.render('athleteGroup', {
       user: sess.user,
       athletes: aths

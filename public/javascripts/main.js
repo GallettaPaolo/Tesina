@@ -29,7 +29,7 @@ $(document).ready(function () {
   $('select').material_select();
 
   $("#askmore").modal();
-
+  $("#addGroup").modal();
 
   $("#calendario").click(function () {
     $.get("http://localhost:3000/competitions", (response) => {
@@ -41,6 +41,37 @@ $(document).ready(function () {
           compId: $(this).data("code"),
           data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
         })
+      })
+
+      $(".subscribeAthlete").click(function () {
+        var compCode = $(this).data("code");
+        $.get("http://localhost:3000/getTrainerAthletes", (response) => {
+          response.forEach(function (element) {
+            $("#addGroup .athletes").append(
+              '<li class="collection-item avatar">'
+              + ' <img src="' + element.imgUrl + '" alt="" class="circle">'
+              + ' <p>' + element.name + ' <br>' + element.surname + '</p>'
+              + '  <p href="#!" class="secondary-content"><input id="' + element._id + '" type="checkbox" /><label for="' + element._id + '"></label></p>'
+              + '</li>'
+            );
+          }, this);
+          $("#addGroup").modal('open');
+          $("#addGroup .modal-action").click(function () {
+            var idsAthletes = [];
+            $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
+              idsAthletes.push($(this).attr("id"));
+            })
+            $.post("http://localhost:3000/subscribeAthlete", {
+              athletes: idsAthletes,
+              competition: compCode
+            }, (response) => {
+
+              if (response)
+               Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
+            })
+          })
+        })
+
       })
     });
   })
@@ -94,9 +125,9 @@ $(document).ready(function () {
 
   $("#gruppo").click(function () {
     $.get("http://localhost:3000/athleteGroup", (response) => {
+      alert(response);
       $(".content").empty();
       $(".content").append(response);
-      $("#addGroup").modal()
       $('.collapsible').collapsible();
       $(".addGroup").click(function () {
         $(".athletes").empty();
@@ -119,7 +150,7 @@ $(document).ready(function () {
             $.post("http://localhost:3000/addAthletes", {
               athletes: idsAthletes
             }, (response) => {
-              if(response)
+              if (response)
                 $("#gruppo").trigger("click");
             })
           })
@@ -128,7 +159,6 @@ $(document).ready(function () {
     })
   })
 
-  $(".subscribeAthlete")
 
   $(".logout").click(() => {
     if ($(".auth").data("auth") == "google") {

@@ -25,8 +25,8 @@
                             </ul>
                         </div>
                         <div class="card-action">
-                            <a class="<%= (role == "Allenatore")? "subscribeAthlete": "subscribe" %> waves-effect" data-code=<%= competition._id%>> <%= (role=="Allenatore")?"Iscrivi":"Iscriviti" %> </a>
-                        </div>
+                            <a class="<%= (role == "Allenatore")? "subscribeAthlete": "subscribe" %> waves-effect" data-code=<%= competition._id%> <%=(role=="Allenatore")?'href=#addGroup': "" %> > <%= (role=="Allenatore")?"Iscrivi":"Iscriviti" %> </a>
+                        </div> 
                     </div>
                 </div>
                 <%
