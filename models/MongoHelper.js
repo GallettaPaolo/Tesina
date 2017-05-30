@@ -176,34 +176,61 @@ function MongoHelper() {
       assert.equal(err, null);
       assert.equal(objectIds.length, r.result.n);
       getAthletesIdArray(idsAthletes, userColl, (athletes) => {
-        socketCallback("trainer-set", athletes)
+        socketCallback("trainer-set", {athletes: athletes, trainer:user})
         callback(true);
       })
 
     })
   }
 
-  this.subscribeAthletes = (idsAthletes, competition, callback) => {
+this.getAthleteSubscriptions = (email,callback)=>{
+  MongoClient.connect(url,(err,db)=>{
+    assert.equal(null,err);
+    getSubscriptions(email,db,(subscriptions)=>{
+      db.close();
+      callback(subscriptions);
+    })
+  })
+}
+var getSubscriptions = (email,db,callback)=>{
+  var userColl = db.collection('users');
+  userColl.find({email:email},{subscriptions:1}).toArray((err,arr)=>{
+    callback(arr[0].subscriptions);
+  })
+}
+
+  this.subscribeAthletes = (idsAthletes, competition, data, callback) => {
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);
       var userColl = db.collection('users');
-      userColl.find({ email: usrEmail }).toArray((err, arr) => {
+      var objectIds = [];
+      for (var i = 0; i < idsAthletes.length; i++)
+        objectIds.push(new ObjectID(idsAthletes[i]));
+      userColl.find({ _id: { $in: objectIds } }).toArray((err, arr) => {
         arr.forEach(function (elem) {
+          console.log(elem)
           if (elem.subscriptions == undefined || elem.subscriptions == null)
-            updatingUser(userColl, db, { email: usrEmail }, { subscriptions: [] }, (updated) => {
-              subscribe(usrEmail, compId, data, userColl, 0, (subscribed) => {
+            updatingUser(userColl, db, { email: elem.email }, { subscriptions: [] }, (updated) => {
+              subscribeMultipleAthletes(objectIds, competition, data, userColl, (subscribed) => {
                 db.close();
                 callback(subscribed);
               })
             })
           else {
-            if (elem.subscriptions.indexOf(compId) == -1)
-              subscribe(usrEmail, compId, data, userColl, elem.subscriptions.length, (subscribed) => {
+            var subscriptions = [];
+            for(var i = 0; i < elem.subscriptions.length; i++)
+              subscriptions.push(elem.subscriptions[i].competition);
+            
+            if (subscriptions.indexOf(competition) == -1)
+              subscribeMultipleAthletes(objectIds, competition, data, userColl, (subscribed) => {
                 db.close();
                 callback(subscribed);
               })
             else {
-
+              console.log("La gara esiste gia");
+              var arrayIndex = subscriptions.indexOf(competition);
+              var updateCellArray = "subscriptions." + arrayIndex + ".accepted";
+              updatingUser(userColl, db, { _id: new ObjectID(elem._id) }, { $set: { updateCellArray: data } })
               db.close();
               callback(true);
             }
@@ -214,7 +241,15 @@ function MongoHelper() {
     })
   }
 
-  var subscribeMultipleAthletes = (idsAthletes,competition)
+  var subscribeMultipleAthletes = (idsAthletes, competition, data, userColl, callback) => {
+    userColl.updateMany({ _id: { $in: idsAthletes } }, { $push: { subscriptions: { competitition: competition, dateRequest: "", accepted: data } } }, (err, r) => {
+      console.log("Errore: " + err);
+      console.log("Risultato: " + r)
+      assert.equal(err, null);
+      assert.equal(1, r.result.n);
+      callback(true);
+    })
+  }
 
   this.getAthletesWithIds = (athletesId, callback) => {
     MongoClient.connect(url, (err, db) => {

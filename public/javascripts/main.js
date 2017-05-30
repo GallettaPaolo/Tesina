@@ -10,6 +10,7 @@ $(document).ready(function () {
 
   var socket = io.connect("http://localhost:3000");
   socket.on("subscription", (data) => {
+    Materialize.toast("Richiesta inviata!",4000);
     $("#iscrizioni").children(".badge").removeClass("hide");
     $("#iscrizioni").children('.badge').text(data.tot);
   })
@@ -63,7 +64,8 @@ $(document).ready(function () {
             })
             $.post("http://localhost:3000/subscribeAthlete", {
               athletes: idsAthletes,
-              competition: compCode
+              competition: compCode,
+              data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
             }, (response) => {
 
               if (response)
@@ -101,10 +103,8 @@ $(document).ready(function () {
       fields: ["role", "speciality"],
       values: [$(".rolesDiv input").val().trim(), $(".specDiv input").val().trim()]
     }, (response) => {
-      alert(response);
       if (response)
         $.get("http://localhost:3000/getActions?role=" + values[0], (acts) => {
-          alert(acts);
           $(".actions").empty();
           $(".actions").append('<li><a id="' + acts[0].action.toLowerCase() + '" class="waves-effect ' + acts[0].action.toLowerCase() + '"><i class="material-icons"> ' + acts[0].icon + '  </i>  ' + acts[0].action + ' </a></li>')
           $.each(acts, (i, act) => {
@@ -125,7 +125,6 @@ $(document).ready(function () {
 
   $("#gruppo").click(function () {
     $.get("http://localhost:3000/athleteGroup", (response) => {
-      alert(response);
       $(".content").empty();
       $(".content").append(response);
       $('.collapsible').collapsible();

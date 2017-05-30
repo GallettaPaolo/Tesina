@@ -13,11 +13,13 @@ router.get('/', function (req, res, next) {
 
 router.get("/subscriptions", (req, res) => {
   var sess = req.session;
-  mongoInstance.getCompetitionsWithinArray(sess.user.subscriptions, (comp) => {
-    res.render('subscriptions', {
-      subscriptions: sess.user.subscriptions,
-      competitions: comp
-    });
+  mongoInstance.getAthleteSubscriptions(sess.user.email, (subscriptions) => {
+    mongoInstance.getCompetitionsWithinArray(subscriptions, (comp) => {
+      res.render('subscriptions', {
+        subscriptions: subscriptions,
+        competitions: comp
+      });
+    })
   })
 })
 
@@ -27,9 +29,10 @@ router.get("/allAthletes", (req, res) => {
   })
 })
 
-router.get("/getTrainerAthletes",(req,res)=>{
+router.get("/getTrainerAthletes", (req, res) => {
   var sess = req.session;
-  mongoInstance.getAthletesWithIds(sess.user.athletes,(aths)=>{
+  console.log(sess.user.athletes);
+  mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
     res.send(aths);
   })
 })
@@ -122,7 +125,7 @@ router.get("/competitions", (req, res) => {
   var sess = req.session;
   console.log(sess.user.role)
   mongoInstance.getCompetitions((comp) => {
-    res.render('competitions', { competitions: comp , role:sess.user.role});
+    res.render('competitions', { competitions: comp, role: sess.user.role });
   })
 
 })
@@ -134,6 +137,17 @@ router.post('/subscribe', (req, res) => {
       sess.user = user;
       res.end();
     })
+  })
+})
+
+router.post("/subscribeAthlete", (req, res) => {
+  var athletes = req.body.athletes;
+  var competition = req.body.competition;
+  var data = req.body.data;
+
+  mongoInstance.subscribeAthletes(athletes, competition, data, (subscribed) => {
+    if (subscribed)
+      res.send("True");
   })
 })
 
