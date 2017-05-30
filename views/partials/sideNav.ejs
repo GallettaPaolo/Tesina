@@ -13,7 +13,7 @@
         </div>
         <span class="auth hide" data-auth=<%= user.authType %>></span>
         <span class="incomplete hide" data-incomplete=<%= user.isIncomplete %>></span>
-        <a href="#!user"><img class="circle" src= <%= user.imgUrl%> ></a>
+        <a class="usrImg" href="#!user" data-id=<%= user._id %>><img class="circle" src= <%= user.imgUrl%> ></a>
         <a href="#!name"><span class="white-text name"><%= user.name %></span></a>
         <a href="#!email"><span class="white-text email"><%= user.email%> </span></a>
         <span class="hide role"><%= user.role%></span>

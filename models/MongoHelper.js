@@ -213,7 +213,7 @@ function MongoHelper() {
         arr.forEach(function (elem) {
           if (elem.subscriptions == undefined || elem.subscriptions == null)
             updatingUser(userColl, db, { email: elem.email }, { subscriptions: [] }, (updated) => {
-              subscribeMultipleAthletes(objectIds, competition, data, userColl, (subscribed) => {
+              subscribeMultipleAthletes(objectIds, competition,db, data, userColl, (subscribed) => {
                 db.close();
                 callback(subscribed);
               })
@@ -224,7 +224,7 @@ function MongoHelper() {
               subscriptions.push(elem.subscriptions[i].competition);
             console.log("Codice delle gare dell'utente: " + elem.name + ": " + subscriptions);
             if (subscriptions.indexOf(competition) == -1)
-              subscribeMultipleAthletes(objectIds, competition, data, userColl, (subscribed) => {
+              subscribeMultipleAthletes(objectIds, competition,db, data, userColl, (subscribed) => {
                 db.close();
                 callback(subscribed);
               })
@@ -236,7 +236,6 @@ function MongoHelper() {
               dataToSet[updateCellArray] = data;
               console.log(dataToSet);
               updatingUser(userColl, db, { email: elem.email }, dataToSet, (updated) => {
-                console.log(updated);
               })
 
             }
@@ -250,12 +249,22 @@ function MongoHelper() {
     })
   }
 
-  var subscribeMultipleAthletes = (idsAthletes, competition, data, userColl, callback) => {
+  var getCompetitionById = (competitionId,db, callback)=>{
+    var compColl = db.collection('competitions');
+    compColl.find({_id: new ObjectID(competitionId)}).toArray((err,arr)=>{
+      callback(arr[0])
+    })
+  }
+
+  var subscribeMultipleAthletes = (idsAthletes, competition,db, data, userColl, callback) => {
     userColl.updateMany({ _id: { $in: idsAthletes } }, { $push: { subscriptions: { competitition: competition, dateRequest: "", accepted: data } } }, (err, r) => {
       console.log("Errore: " + err);
       console.log("Risultato: " + r)
       assert.equal(err, null);
       assert.equal(idsAthletes.length, r.result.n);
+      getCompetitionById(competition,(compData)=>{
+        socketCallback("trainer-subscribed",{filter: idsAthletes, competition:compData})
+      })
       callback(true);
     })
   }

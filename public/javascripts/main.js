@@ -9,6 +9,10 @@ $(document).ready(function () {
   var date = new Date();
 
   var socket = io.connect("http://localhost:3000");
+  socket.on("sendAthleteId",()=>{
+    var usrId = $("usrImg").data("id");
+    socket.emit("athleteId",usrId);
+  })
   socket.on("subscription", (data) => {
     Materialize.toast("Richiesta inviata!",4000);
     $("#iscrizioni").children(".badge").removeClass("hide");

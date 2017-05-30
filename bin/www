@@ -38,9 +38,14 @@ server.on('listening', onListening);
 /**
 * Gestione della connessione con il server tramite socket io
 */
+
+var sockets = [];
+
 io.on('connection', (socket) => {
-  console.log("Qualcuno si è connesso");
-  socket.emit("prova");
+  socket.emit("sendUserId");
+  socket.on("athleteId",(athleteId)=>{
+    sockets.push({athleteId: athleteId, socket:socket});
+  })
   mongoInstance.setCallback((e,d)=>{  //Funzione di callback che viene richiamata ogni volta che è necessaria una modifica in realtime con l'utente
   console.log("Evento: "+e);
   console.log(JSON.stringify(d));
