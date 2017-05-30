@@ -213,7 +213,7 @@ function MongoHelper() {
         arr.forEach(function (elem) {
           if (elem.subscriptions == undefined || elem.subscriptions == null)
             updatingUser(userColl, db, { email: elem.email }, { subscriptions: [] }, (updated) => {
-              subscribeMultipleAthletes(objectIds, competition,db, data, userColl, (subscribed) => {
+              subscribeMultipleAthletes(objectIds, competition, db, data, userColl, (subscribed) => {
                 db.close();
                 callback(subscribed);
               })
@@ -222,25 +222,28 @@ function MongoHelper() {
             var subscriptions = [];
             for (var i = 0; i < elem.subscriptions.length; i++)
               subscriptions.push(elem.subscriptions[i].competition);
-            console.log("Codice delle gare dell'utente: " + elem.name + ": " + subscriptions);
             if (subscriptions.indexOf(competition) == -1)
-              subscribeMultipleAthletes(objectIds, competition,db, data, userColl, (subscribed) => {
+              subscribeMultipleAthletes(objectIds, competition, db, data, userColl, (subscribed) => {
                 db.close();
                 callback(subscribed);
               })
             else {
-              console.log("La gara esiste gia");
               var arrayIndex = subscriptions.indexOf(competition);
               var updateCellArray = "subscriptions." + arrayIndex + ".accepted";
               var dataToSet = {};
               dataToSet[updateCellArray] = data;
               console.log(dataToSet);
               updatingUser(userColl, db, { email: elem.email }, dataToSet, (updated) => {
+                if (updated)
+                  getCompetitionById(competition,db, (compData) => {
+                    socketCallback("trainer-subscribed", { filter: idsAthletes, data: compData })
+                    callback(true);
+                  })
               })
 
             }
           }
-          if(i == arr.length)
+          if (i == arr.length)
             callback(true);
           i++;
         })
@@ -249,21 +252,23 @@ function MongoHelper() {
     })
   }
 
-  var getCompetitionById = (competitionId,db, callback)=>{
+  var getCompetitionById = (competitionId, db, callback) => {
+    console.log(db);
     var compColl = db.collection('competitions');
-    compColl.find({_id: new ObjectID(competitionId)}).toArray((err,arr)=>{
+    compColl.find({ _id: new ObjectID(competitionId) }).toArray((err, arr) => {
       callback(arr[0])
     })
   }
 
-  var subscribeMultipleAthletes = (idsAthletes, competition,db, data, userColl, callback) => {
+  var subscribeMultipleAthletes = (idsAthletes, competition, db, data, userColl, callback) => {
+    console.log("Database passato: "+db);
     userColl.updateMany({ _id: { $in: idsAthletes } }, { $push: { subscriptions: { competitition: competition, dateRequest: "", accepted: data } } }, (err, r) => {
       console.log("Errore: " + err);
       console.log("Risultato: " + r)
       assert.equal(err, null);
       assert.equal(idsAthletes.length, r.result.n);
-      getCompetitionById(competition,(compData)=>{
-        socketCallback("trainer-subscribed",{filter: idsAthletes, competition:compData})
+      getCompetitionById(competition,db, (compData) => {
+        socketCallback("trainer-subscribed", { filter: idsAthletes, data: compData })
       })
       callback(true);
     })

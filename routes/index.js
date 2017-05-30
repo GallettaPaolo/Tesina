@@ -13,6 +13,7 @@ router.get('/', function (req, res, next) {
 
 router.get("/subscriptions", (req, res) => {
   var sess = req.session;
+  console.log(sess.user);
   mongoInstance.getAthleteSubscriptions(sess.user.email, (subscriptions) => {
     mongoInstance.getCompetitionsWithinArray(subscriptions, (comp) => {
       res.render('subscriptions', {

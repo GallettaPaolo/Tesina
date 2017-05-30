@@ -11,7 +11,7 @@
         }
         %>
     <li>
-        <div class="collapsible-header"><i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null)?"schedule":"done" %></i><%= competition.description  %></div>
+        <div class="collapsible-header"><i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null || subscription.accepted == "")?"schedule":"done" %></i><%= competition.description  %></div>
         <div class="collapsible-body">
             <table>
                 <thead>

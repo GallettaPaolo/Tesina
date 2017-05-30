@@ -43,16 +43,38 @@ var sockets = [];
 
 io.on('connection', (socket) => {
   socket.emit("sendUserId");
-  socket.on("athleteId",(athleteId)=>{
-    sockets.push({athleteId: athleteId, socket:socket});
+  socket.on("athleteId", (data) => {
+    console.log(data)
+    sockets.push({ id: data.userId, conn: socket });
   })
-  mongoInstance.setCallback((e,d)=>{  //Funzione di callback che viene richiamata ogni volta che è necessaria una modifica in realtime con l'utente
-  console.log("Evento: "+e);
-  console.log(JSON.stringify(d));
-    socket.emit(e,d)
-    console.log("Ho inviato in broadcast l'evento");
+
+  socket.on("disconnect", () => {
+    console.log("Qualcuno si sta disconnettendo");
+    for (var i = 0; i < sockets.length; i++) {
+      if (sockets[i].conn === socket)
+        sockets.splice(i, 1);
+    }
+  })
+
+  mongoInstance.setCallback((e, d) => {  //Funzione di callback che viene richiamata ogni volta che è necessaria una modifica in realtime con l'utente
+    if (d != undefined) {
+      if (d.filter != undefined || d.filter != null) {
+        var athletesId = d.filter;
+        sockets.forEach((elem) => {
+          if (athletesId.indexOf(elem.id) >= 0){
+            console.log("Invio al socket con id: "+elem.id+", l'evento: "+e)
+            elem.conn.emit(e, d.data);
+          }
+        })
+      }
+    } else {
+      socket.emit(e, d)
+      console.log("Ho inviato in broadcast l'evento");
+    }
   });
 })
+
+
 
 /**
  * Normalize a port into a number, string, or false.

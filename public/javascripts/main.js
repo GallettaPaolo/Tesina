@@ -9,14 +9,20 @@ $(document).ready(function () {
   var date = new Date();
 
   var socket = io.connect("http://localhost:3000");
-  socket.on("sendAthleteId",()=>{
-    var usrId = $("usrImg").data("id");
-    socket.emit("athleteId",usrId);
+  socket.on("sendUserId",()=>{
+    console.log("PORCODDIO"); 
+    var usrId = $(".usrImg").data("id");
+    console.log(usrId);
+    socket.emit("athleteId",{userId: usrId});
   })
   socket.on("subscription", (data) => {
     Materialize.toast("Richiesta inviata!",4000);
     $("#iscrizioni").children(".badge").removeClass("hide");
     $("#iscrizioni").children('.badge').text(data.tot);
+  })
+
+  socket.on("trainer-subscribed",(data)=>{
+      Materialize.toast("Il tuo allenatore ti ha iscritto a: "+data.description);
   })
   /*gapi.load('auth2', function () {
     gapi.auth2.init();
@@ -51,6 +57,7 @@ $(document).ready(function () {
       $(".subscribeAthlete").click(function () {
         var compCode = $(this).data("code");
         $.get("http://localhost:3000/getTrainerAthletes", (response) => {
+          $("#addGroup .athletes").empty();
           response.forEach(function (element) {
             $("#addGroup .athletes").append(
               '<li class="collection-item avatar">'
