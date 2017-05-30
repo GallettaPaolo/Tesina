@@ -56,6 +56,8 @@ function MongoHelper() {
   }
 
   var updatingUser = (userColl, db, filter, data, callback) => {
+    console.log("Filtro: " + JSON.stringify(filter));
+    console.log("data:" + JSON.stringify(data));
     userColl.updateOne({ email: filter.email }, { $set: data }, (err, r) => {
       assert.equal(err, null);
       assert.equal(1, r.result.n);
@@ -176,28 +178,28 @@ function MongoHelper() {
       assert.equal(err, null);
       assert.equal(objectIds.length, r.result.n);
       getAthletesIdArray(idsAthletes, userColl, (athletes) => {
-        socketCallback("trainer-set", {athletes: athletes, trainer:user})
+        socketCallback("trainer-set", { athletes: athletes, trainer: user })
         callback(true);
       })
 
     })
   }
 
-this.getAthleteSubscriptions = (email,callback)=>{
-  MongoClient.connect(url,(err,db)=>{
-    assert.equal(null,err);
-    getSubscriptions(email,db,(subscriptions)=>{
-      db.close();
-      callback(subscriptions);
+  this.getAthleteSubscriptions = (email, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      getSubscriptions(email, db, (subscriptions) => {
+        db.close();
+        callback(subscriptions);
+      })
     })
-  })
-}
-var getSubscriptions = (email,db,callback)=>{
-  var userColl = db.collection('users');
-  userColl.find({email:email},{subscriptions:1}).toArray((err,arr)=>{
-    callback(arr[0].subscriptions);
-  })
-}
+  }
+  var getSubscriptions = (email, db, callback) => {
+    var userColl = db.collection('users');
+    userColl.find({ email: email }, { subscriptions: 1 }).toArray((err, arr) => {
+      callback(arr[0].subscriptions);
+    })
+  }
 
   this.subscribeAthletes = (idsAthletes, competition, data, callback) => {
     MongoClient.connect(url, (err, db) => {
@@ -207,8 +209,8 @@ var getSubscriptions = (email,db,callback)=>{
       for (var i = 0; i < idsAthletes.length; i++)
         objectIds.push(new ObjectID(idsAthletes[i]));
       userColl.find({ _id: { $in: objectIds } }).toArray((err, arr) => {
+        var i = 0;
         arr.forEach(function (elem) {
-          console.log(elem)
           if (elem.subscriptions == undefined || elem.subscriptions == null)
             updatingUser(userColl, db, { email: elem.email }, { subscriptions: [] }, (updated) => {
               subscribeMultipleAthletes(objectIds, competition, data, userColl, (subscribed) => {
@@ -218,9 +220,9 @@ var getSubscriptions = (email,db,callback)=>{
             })
           else {
             var subscriptions = [];
-            for(var i = 0; i < elem.subscriptions.length; i++)
+            for (var i = 0; i < elem.subscriptions.length; i++)
               subscriptions.push(elem.subscriptions[i].competition);
-            
+            console.log("Codice delle gare dell'utente: " + elem.name + ": " + subscriptions);
             if (subscriptions.indexOf(competition) == -1)
               subscribeMultipleAthletes(objectIds, competition, data, userColl, (subscribed) => {
                 db.close();
@@ -230,11 +232,18 @@ var getSubscriptions = (email,db,callback)=>{
               console.log("La gara esiste gia");
               var arrayIndex = subscriptions.indexOf(competition);
               var updateCellArray = "subscriptions." + arrayIndex + ".accepted";
-              updatingUser(userColl, db, { _id: new ObjectID(elem._id) }, { $set: { updateCellArray: data } })
-              db.close();
-              callback(true);
+              var dataToSet = {};
+              dataToSet[updateCellArray] = data;
+              console.log(dataToSet);
+              updatingUser(userColl, db, { email: elem.email }, dataToSet, (updated) => {
+                console.log(updated);
+              })
+
             }
           }
+          if(i == arr.length)
+            callback(true);
+          i++;
         })
 
       })
@@ -246,7 +255,7 @@ var getSubscriptions = (email,db,callback)=>{
       console.log("Errore: " + err);
       console.log("Risultato: " + r)
       assert.equal(err, null);
-      assert.equal(1, r.result.n);
+      assert.equal(idsAthletes.length, r.result.n);
       callback(true);
     })
   }
