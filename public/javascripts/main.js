@@ -10,19 +10,17 @@ $(document).ready(function () {
 
   var socket = io.connect("http://localhost:3000");
   socket.on("sendUserId",()=>{
-    console.log("PORCODDIO"); 
     var usrId = $(".usrImg").data("id");
     console.log(usrId);
     socket.emit("athleteId",{userId: usrId});
   })
   socket.on("subscription", (data) => {
-    Materialize.toast("Richiesta inviata!",4000);
+    Materialize.toast("Richiesta inviata!",2000);
     $("#iscrizioni").children(".badge").removeClass("hide");
-    $("#iscrizioni").children('.badge').text(data.tot);
   })
 
   socket.on("trainer-subscribed",(data)=>{
-      Materialize.toast("Il tuo allenatore ti ha iscritto a: "+data.description);
+      Materialize.toast("Il tuo allenatore ti ha iscritto a: "+data.description,2000);
   })
   /*gapi.load('auth2', function () {
     gapi.auth2.init();
@@ -78,7 +76,6 @@ $(document).ready(function () {
               competition: compCode,
               data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
             }, (response) => {
-
               if (response)
                Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
             })

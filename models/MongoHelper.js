@@ -121,8 +121,7 @@ function MongoHelper() {
     userColl.updateOne({ email: usrEmail }, { $push: { subscriptions: { competition: compId, dateRequest: data } } }, (err, r) => {
       assert.equal(null, err);
       assert.equal(1, r.result.n);
-      console.log(socketCallback);
-      socketCallback("subscription", { tot: subLen + 1 });
+      socketCallback("subscription");
       callback(true);
     })
 
@@ -310,9 +309,10 @@ function MongoHelper() {
     var competitionsColl = db.collection('competitions');
     var competitions = [];
     var dat = new Date();
-    var dateToQuery = dat.getDate() + "/" + dat.getMonth();
-
-    competitionsColl.find({ date: { $gt: dateToQuery } }).toArray((err, coll) => {
+    var dateToQuery = dat.getDate() + "/" + dat.getMonth()+1;
+    console.log(dateToQuery);
+    competitionsColl.find({  }).toArray((err, coll) => {
+      console.log(coll);
       coll.forEach(function (element) {
         competitions.push(element);
       }, this);
@@ -322,7 +322,7 @@ function MongoHelper() {
             return item.key == elem.scale
           })
 
-          if (scales[index] == undefined)
+          if (scales[index] != undefined)
             elem.scale = scales[index].name;
         })
         callback(competitions);

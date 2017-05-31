@@ -19,12 +19,12 @@
         <span class="hide role"><%= user.role%></span>
       </div>
     </li>
-<div class="actions">
-    <%
-      actions.forEach((a)=>{
-     %>
-      <li><a id=<%= a.action.toLowerCase() %> class="waves-effect <%= a.action.toLowerCase() %>"><i class="material-icons"><%= a.icon %> </i> <span class="hide badge red white-text"></span> <%= a.action %></a></li>
-      <%   }) %>
-  </div>
+    <div class="actions">
+      <% if(user.role == "Allenatore") {%>
+        <% include ./trainerActions %>
+          <%} else{%>
+          <% include ./athleteActions %>
+            <%}%>
+    </div>
   </ul>
 </header>

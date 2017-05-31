@@ -126,6 +126,7 @@ router.get("/competitions", (req, res) => {
   var sess = req.session;
   console.log(sess.user.role)
   mongoInstance.getCompetitions((comp) => {
+    console.log(comp);
     res.render('competitions', { competitions: comp, role: sess.user.role });
   })
 
