@@ -9,18 +9,18 @@ $(document).ready(function () {
   var date = new Date();
 
   var socket = io.connect("http://localhost:3000");
-  socket.on("sendUserId",()=>{
+  socket.on("sendUserId", () => {
     var usrId = $(".usrImg").data("id");
     console.log(usrId);
-    socket.emit("athleteId",{userId: usrId});
+    socket.emit("athleteId", { userId: usrId });
   })
   socket.on("subscription", (data) => {
-    Materialize.toast("Richiesta inviata!",2000);
+    Materialize.toast("Richiesta inviata!", 2000);
     $("#iscrizioni").children(".badge").removeClass("hide");
   })
 
-  socket.on("trainer-subscribed",(data)=>{
-      Materialize.toast("Il tuo allenatore ti ha iscritto a: "+data.description,2000);
+  socket.on("trainer-subscribed", (data) => {
+    Materialize.toast("Il tuo allenatore ti ha iscritto a: " + data.description, 2000);
   })
   /*gapi.load('auth2', function () {
     gapi.auth2.init();
@@ -41,6 +41,7 @@ $(document).ready(function () {
   $("#addGroup").modal();
 
   $("#calendario").click(function () {
+    var compCode;
     $.get("http://localhost:3000/competitions", (response) => {
       $(".content").empty();
       $(".content").append(response);
@@ -52,8 +53,24 @@ $(document).ready(function () {
         })
       })
 
+      $("#addGroup .modal-action").click(function () {
+        var idsAthletes = [];
+        console.log("Iscrivo a: "+compCode);
+        $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
+          idsAthletes.push($(this).attr("id"));
+        })
+        $.post("http://localhost:3000/subscribeAthlete", {
+          athletes: idsAthletes,
+          competition: compCode,
+          data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
+        }, (response) => {
+          if (response)
+            Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
+        })
+      })
+
       $(".subscribeAthlete").click(function () {
-        var compCode = $(this).data("code");
+        compCode = $(this).data("code");
         $.get("http://localhost:3000/getTrainerAthletes", (response) => {
           $("#addGroup .athletes").empty();
           response.forEach(function (element) {
@@ -66,20 +83,6 @@ $(document).ready(function () {
             );
           }, this);
           $("#addGroup").modal('open');
-          $("#addGroup .modal-action").click(function () {
-            var idsAthletes = [];
-            $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
-              idsAthletes.push($(this).attr("id"));
-            })
-            $.post("http://localhost:3000/subscribeAthlete", {
-              athletes: idsAthletes,
-              competition: compCode,
-              data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
-            }, (response) => {
-              if (response)
-               Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
-            })
-          })
         })
 
       })

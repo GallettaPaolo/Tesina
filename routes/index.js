@@ -13,9 +13,10 @@ router.get('/', function (req, res, next) {
 
 router.get("/subscriptions", (req, res) => {
   var sess = req.session;
-  console.log(sess.user);
   mongoInstance.getAthleteSubscriptions(sess.user.email, (subscriptions) => {
+    console.log("Gare prelevate dall'utente: "+JSON.stringify(subscriptions))
     mongoInstance.getCompetitionsWithinArray(subscriptions, (comp) => {
+      console.log(comp)
       res.render('subscriptions', {
         subscriptions: subscriptions,
         competitions: comp
@@ -32,7 +33,6 @@ router.get("/allAthletes", (req, res) => {
 
 router.get("/getTrainerAthletes", (req, res) => {
   var sess = req.session;
-  console.log(sess.user.athletes);
   mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
     res.send(aths);
   })
@@ -61,14 +61,10 @@ router.get('/autoLog', (req, res) => {
 
 router.get('/main', (req, res) => {
   var sess = req.session;
-  console.log("Ruolo: " + sess.user.role);
-  console.log(sess.user.role == undefined);
   if (sess.user.role == undefined || sess.user.role == null)
     sess.user.isIncomplete = true;
   else
     sess.user.isIncomplete = false;
-
-  console.log(JSON.stringify(sess.user));
   mongoInstance.getActions((sess.user.isIncomplete) ? "Atleta" : sess.user.role, (acts) => {
     mongoInstance.getRoles((possibleRoles) => {
       mongoInstance.getAthleteCategory((possibleCategories) => {
@@ -124,15 +120,12 @@ router.get('/register', (req, res) => {
 
 router.get("/competitions", (req, res) => {
   var sess = req.session;
-  console.log(sess.user.role)
   mongoInstance.getCompetitions((comp) => {
-    console.log(comp);
     res.render('competitions', { competitions: comp, role: sess.user.role });
   })
 
 })
 router.post('/subscribe', (req, res) => {
-  console.log("devo fare un iscrizione");
   var sess = req.session;
   mongoInstance.subscribeAthlete(sess.user.email, req.body.compId, req.body.data, (subscribed) => {
     mongoInstance.getUserByEmail(sess.user.email, (user) => {
@@ -146,10 +139,11 @@ router.post("/subscribeAthlete", (req, res) => {
   var athletes = req.body.athletes;
   var competition = req.body.competition;
   var data = req.body.data;
-
+  console.log("Gara alla quale iscrivere un atleta: "+competition);
   mongoInstance.subscribeAthletes(athletes, competition, data, (subscribed) => {
     if (subscribed)
       res.send("True");
+    res.end();
   })
 })
 

@@ -31,7 +31,7 @@ function MongoHelper() {
       assert.equal(null, err);
       findUserWithoutTrainer(db, (users) => {
         db.close();
-        console.log("Utenti: " + JSON.stringify(users));
+
         callback(users);
       })
     })
@@ -56,8 +56,8 @@ function MongoHelper() {
   }
 
   var updatingUser = (userColl, db, filter, data, callback) => {
-    console.log("Filtro: " + JSON.stringify(filter));
-    console.log("data:" + JSON.stringify(data));
+
+
     userColl.updateOne({ email: filter.email }, { $set: data }, (err, r) => {
       assert.equal(err, null);
       assert.equal(1, r.result.n);
@@ -149,8 +149,8 @@ function MongoHelper() {
   var addAthletesIntoTrainer = (idsAthletes, user, db, callback) => {
     var userColl = db.collection('users');
     userColl.update({ email: user.email }, { $push: { athletes: { $each: idsAthletes } } }, (err, r) => {
-      console.log("Errore: " + err);
-      console.log("Risultato: " + r)
+
+
       assert.equal(err, null);
       assert.equal(1, r.result.n);
       callback(true);
@@ -231,10 +231,10 @@ function MongoHelper() {
               var updateCellArray = "subscriptions." + arrayIndex + ".accepted";
               var dataToSet = {};
               dataToSet[updateCellArray] = data;
-              console.log(dataToSet);
+
               updatingUser(userColl, db, { email: elem.email }, dataToSet, (updated) => {
                 if (updated)
-                  getCompetitionById(competition,db, (compData) => {
+                  getCompetitionById(competition, db, (compData) => {
                     socketCallback("trainer-subscribed", { filter: idsAthletes, data: compData })
                     callback(true);
                   })
@@ -252,7 +252,7 @@ function MongoHelper() {
   }
 
   var getCompetitionById = (competitionId, db, callback) => {
-    console.log(db);
+
     var compColl = db.collection('competitions');
     compColl.find({ _id: new ObjectID(competitionId) }).toArray((err, arr) => {
       callback(arr[0])
@@ -260,16 +260,16 @@ function MongoHelper() {
   }
 
   var subscribeMultipleAthletes = (idsAthletes, competition, db, data, userColl, callback) => {
-    console.log("Database passato: "+db);
-    userColl.updateMany({ _id: { $in: idsAthletes } }, { $push: { subscriptions: { competitition: competition, dateRequest: "", accepted: data } } }, (err, r) => {
-      console.log("Errore: " + err);
-      console.log("Risultato: " + r)
+    userColl.updateMany({ _id: { $in: idsAthletes } }, { $push: { subscriptions: { competition: competition, dateRequest: "", accepted: data } } }, (err, r) => {
       assert.equal(err, null);
       assert.equal(idsAthletes.length, r.result.n);
-      getCompetitionById(competition,db, (compData) => {
-        socketCallback("trainer-subscribed", { filter: idsAthletes, data: compData })
+      getCompetitionById(competition, db, (compData) => {
+        console.log("Compdata: " + compData)
+        for (var i = 0; i < idsAthletes.length; i++) {
+          socketCallback("trainer-subscribed", { filter: idsAthletes[i], data: compData })
+        }
+        callback(true);
       })
-      callback(true);
     })
   }
 
@@ -309,10 +309,10 @@ function MongoHelper() {
     var competitionsColl = db.collection('competitions');
     var competitions = [];
     var dat = new Date();
-    var dateToQuery = dat.getDate() + "/" + dat.getMonth()+1;
-    console.log(dateToQuery);
-    competitionsColl.find({  }).toArray((err, coll) => {
-      console.log(coll);
+    var dateToQuery = dat.getDate() + "/" + dat.getMonth() + 1;
+
+    competitionsColl.find({}).toArray((err, coll) => {
+
       coll.forEach(function (element) {
         competitions.push(element);
       }, this);
@@ -353,7 +353,7 @@ function MongoHelper() {
     for (var i = 0; i < ids.length; i++) {
       objectIds.push(new ObjectID(ids[i].competition));
     }
-    console.log(objectIds);
+
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);
       getCompFromArray(objectIds, db, (competitions) => {
