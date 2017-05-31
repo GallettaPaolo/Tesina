@@ -25,6 +25,14 @@ router.get("/subscriptions", (req, res) => {
   })
 })
 
+router.get("/subscriptionRequests",(req,res)=>{
+  var sess = req.session;
+  mongoInstance.getAthletesWithIds(sess.user.athletes,(aths)=>{
+    
+    res.render('subscriptionsRequests',{athletes: aths})
+  })
+})
+
 router.get("/allAthletes", (req, res) => {
   mongoInstance.getUserWithoutTrainer((users) => {
     res.send(users);

@@ -94,6 +94,13 @@ $(document).ready(function () {
   if ($(".incomplete").data("incomplete"))
     $("#askmore").modal('open');
 
+  
+$("#richieste").click(function(){
+  $.get("http://localhost:3000/subscriptionRequests", (response) => {
+      $(".content").empty();
+      $(".content").append(response);
+  })
+})
 
   $(".rolesDiv select").change(() => {
     var sel = $(".rolesDiv input").val().trim();
