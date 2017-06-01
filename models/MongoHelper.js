@@ -95,14 +95,14 @@ function MongoHelper() {
       userColl.find({ email: usrEmail }).toArray((err, arr) => {
         if (arr[0].subscriptions == undefined || arr[0].subscriptions == null)
           updatingUser(userColl, db, { email: usrEmail }, { subscriptions: [] }, (updated) => {
-            subscribe(usrEmail, compId, data, userColl, 0, (subscribed) => {
+            subscribe(arr[0]._id,usrEmail, compId, data, userColl, 0, (subscribed) => {
               db.close();
               callback(subscribed);
             })
           })
         else {
           if (arr[0].subscriptions.indexOf(compId) == -1)
-            subscribe(usrEmail, compId, data, userColl, arr[0].subscriptions.length, (subscribed) => {
+            subscribe(arr[0]._id,usrEmail, compId, data, userColl, arr[0].subscriptions.length, (subscribed) => {
               db.close();
               callback(subscribed);
             })
@@ -117,11 +117,11 @@ function MongoHelper() {
     })
   }
 
-  var subscribe = (usrEmail, compId, data, userColl, subLen, callback) => {
+  var subscribe = (usrId,usrEmail, compId, data, userColl, subLen, callback) => {
     userColl.updateOne({ email: usrEmail }, { $push: { subscriptions: { competition: compId, dateRequest: data } } }, (err, r) => {
       assert.equal(null, err);
       assert.equal(1, r.result.n);
-      socketCallback("subscription");
+      socketCallback("subscription",{filter:usrId});
       callback(true);
     })
 
@@ -274,6 +274,7 @@ function MongoHelper() {
   }
 
   this.getAthletesWithIds = (athletesId, callback) => {
+    if(athletesId != undefined || athletesId!= null){
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);
       var userColl = db.collection('users');
@@ -282,6 +283,9 @@ function MongoHelper() {
         callback(athletes);
       })
     })
+    }else{
+      callback([]);
+    }
   }
 
   var getAthletesIdArray = (athletesId, userColl, callback) => {

@@ -1,5 +1,5 @@
 <h1>Gruppo di atleti:</h1>
-    <% if((athletes != undefined || athletes != null || athletes.length != 0) {%>
+    <% if(athletes == undefined || athletes == null || athletes.length == 0) {%>
      <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
      <%}%>
     <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi al gruppo</a>

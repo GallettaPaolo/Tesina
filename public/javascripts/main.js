@@ -20,7 +20,7 @@ $(document).ready(function () {
   })
 
   socket.on("trainer-subscribed", (data) => {
-    Materialize.toast("Il tuo allenatore ti ha iscritto a: " + data.description, 2000);
+    Materialize.toast("Il tuo allenatore ti ha iscritto a: " + data.description, 6000);
   })
   /*gapi.load('auth2', function () {
     gapi.auth2.init();
