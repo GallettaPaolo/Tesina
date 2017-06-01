@@ -1,0 +1,68 @@
+<h1>Richieste iscrizioni:</h1>
+<ul class="collapsible popout" data-collapsible="accordition">
+    <% athletes.forEach(function(athlete){%>
+        <li>
+            <div class="collapsible-header"><img class="reduceSize circle" src=<%=athlete.imgUrl %> />
+                <%= athlete.name +" " + athlete.surname  %>
+                    <p href="#!" class="secondary-content"><input class="checkAll" id="<%= athlete._id %>" type="checkbox" /><label for="<%= athlete._id %>"></label></p>
+            </div>
+            <div class="collapsible-body">
+                <ul class="collapsible" data-collapsible="accordition">
+                    <%if(athlete.subscriptions != undefined || athlete.subscriptions != undefined || athlete.subscriptions.length != 0 ){%>
+                        <% athlete.subscriptions.forEach(function(subscription){ %>
+                            <li>
+                                <% 
+                                var competition;
+                                var found = false;
+                                for(var i = 0; i < competitions.length; i++){
+                                    if(competitions[i]._id+"" == subscription.competition+""){
+                                        competition = competitions[i];
+                                        found = true;
+                                    }
+                                }
+                            %>
+                                    <div class="collapsible-header">
+                                        <i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null || subscription.accepted == "")?"schedule":"done" %></i>
+                                        <ul class="collection">
+                                            <li class="collection-item">
+                                                <div>
+                                                    <span><%= competition.description  %></span>
+                                                    <p href="#!" class=" secondary-content"><input id="<%= competition._id %>" type="checkbox" /><label for="<%= competition._id %>"></label></p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Data Gara</th>
+                                                    <th>Richiesta Iscrizione</th>
+                                                    <th>Accettata Iscrizione</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <%= competition.date %>
+                                                    </td>
+                                                    <td>
+                                                        <%= subscription.dateRequest %>
+                                                    </td>
+                                                    <td>
+                                                        <%= (subscription.accepted == undefined || subscription.accepted == null )?"/":subscription.accepted %>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </li>
+                            <% }) %>
+                                <%}else{%>
+                                    <h3>Non ha richieste</h3>
+                                    <%}%>
+                </ul>
+            </div>
+        </li>
+        <%}) %>
+</ul>

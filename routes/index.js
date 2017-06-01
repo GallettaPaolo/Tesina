@@ -28,8 +28,21 @@ router.get("/subscriptions", (req, res) => {
 router.get("/subscriptionRequests",(req,res)=>{
   var sess = req.session;
   mongoInstance.getAthletesWithIds(sess.user.athletes,(aths)=>{
+    var totCompetitions = [];
+    for(var i = 0; i < aths.length; i++){
+      for(var j = 0; j < aths[i].subscriptions.length; j++){
+        totCompetitions.push(aths[i].subscriptions[j]);
+      }
+    }
+    console.log("Gare totali di tutti gli atleti: "+totCompetitions);
+    mongoInstance.getCompetitionsWithinArray(totCompetitions,(comps)=>{
+      console.log("Gare prelevate: "+comps);
+        res.render('subscriptionsRequests',{
+          athletes: aths,
+          competitions: comps
+        })
+    })
     
-    res.render('subscriptionsRequests',{athletes: aths})
   })
 })
 

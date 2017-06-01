@@ -99,6 +99,10 @@ $("#richieste").click(function(){
   $.get("http://localhost:3000/subscriptionRequests", (response) => {
       $(".content").empty();
       $(".content").append(response);
+      $(".collapsible").collapsible();
+      $(".checkAll").click(function(){
+        
+      })
   })
 })
 
