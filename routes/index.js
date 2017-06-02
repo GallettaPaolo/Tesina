@@ -104,6 +104,9 @@ router.get('/main', (req, res) => {
   });
 })
 
+router.get("/addTrain",(req,res)=>{
+  res.render("addTrain");
+})
 
 router.post("/acceptAthlete",(req,res)=>{
   var athlete = req.body.athlete;
@@ -112,7 +115,6 @@ router.post("/acceptAthlete",(req,res)=>{
   console.log(athlete);
   console.log(competitions);
   mongoInstance.subscribeMultipleCompetitions(athlete,competitions,data,(done)=>{
-    console.log("finito");
     res.send(done);
     res.end();
   })

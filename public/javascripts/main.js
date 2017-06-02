@@ -21,13 +21,13 @@ $(document).ready(function () {
 
   socket.on("trainer-subscribed", (data) => {
     var subscribed = "Il tuo allenatore ti ha iscritto a: ";
-    if($.isArray(data)){
-      data.forEach(function(competition){
-        subscribed+= competition.description+", ";
+    if ($.isArray(data)) {
+      data.forEach(function (competition) {
+        subscribed += competition.description + ", ";
       });
-      subscribed = subscribed.substring(0,subscribed.length-2);
-    }else{
-      subscribed+= data.description;
+      subscribed = subscribed.substring(0, subscribed.length - 2);
+    } else {
+      subscribed += data.description;
     }
     Materialize.toast(subscribed, 6000);
   })
@@ -64,7 +64,7 @@ $(document).ready(function () {
 
       $("#addGroup .modal-action").click(function () {
         var idsAthletes = [];
-        console.log("Iscrivo a: "+compCode);
+        console.log("Iscrivo a: " + compCode);
         $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
           idsAthletes.push($(this).attr("id"));
         })
@@ -103,45 +103,53 @@ $(document).ready(function () {
   if ($(".incomplete").data("incomplete"))
     $("#askmore").modal('open');
 
-  
-$("#richieste").click(function(){
-  $.get("http://localhost:3000/subscriptionRequests", (response) => {
+
+  $("#allenamenti").click(function(){
+    $.get("http://localhost:3000/addTrain", (response) => {
+      $(".content").empty();
+      $(".content").append(response);
+      $("select").material_select();
+    });
+  })
+
+  $("#richieste").click(function () {
+    $.get("http://localhost:3000/subscriptionRequests", (response) => {
       $(".content").empty();
       $(".content").append(response);
       $(".collapsible").collapsible();
       var check = false;
-      $(".checkAll").click(function(){
+      $(".checkAll").click(function () {
         var currentId = $(".checkAll").attr("id");
-        $("."+currentId+ " ul li .collapsible-header ul li div .secondary-content input").each(function(index){
-          if($(this).attr("disabled") == undefined){
-            $(this).prop("checked",!check);
+        $("." + currentId + " ul li .collapsible-header ul li div .secondary-content input").each(function (index) {
+          if ($(this).attr("disabled") == undefined) {
+            $(this).prop("checked", !check);
           }
         });
         check = !check;
       })
-      $(".subscribeSingle").click(function(){
+      $(".subscribeSingle").click(function () {
         var athId = $(this).data("athleteid");
         var competitions = [];
-        $("."+athId+ " ul li .collapsible-header ul li div .secondary-content input").each(function(index){
-           if($(this).attr("disabled") == undefined && $(this).prop("checked")){
+        $("." + athId + " ul li .collapsible-header ul li div .secondary-content input").each(function (index) {
+          if ($(this).attr("disabled") == undefined && $(this).prop("checked")) {
             competitions.push($(this).attr("id"));
-           }
+          }
         })
-        if(competitions.length == 0){
-          Materialize.toast("Devi selezionare le gare da accettare",2000);
-        }else{
+        if (competitions.length == 0) {
+          Materialize.toast("Devi selezionare le gare da accettare", 2000);
+        } else {
           $.post("http://localhost:3000/acceptAthlete", {
-          athlete: athId,
-          competitions: competitions,
-          data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
-        }, (response) => {
-          if (response)
+            athlete: athId,
+            competitions: competitions,
+            data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
+          }, (response) => {
+            if (response)
               Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
-        })
+          })
         }
       })
+    })
   })
-})
 
   $(".rolesDiv select").change(() => {
     var sel = $(".rolesDiv input").val().trim();
