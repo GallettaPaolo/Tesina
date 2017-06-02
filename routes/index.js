@@ -49,6 +49,7 @@ router.get("/subscriptionRequests",(req,res)=>{
 router.get("/allAthletes", (req, res) => {
   mongoInstance.getUserWithoutTrainer((users) => {
     res.send(users);
+    res.end();
   })
 })
 
@@ -56,6 +57,7 @@ router.get("/getTrainerAthletes", (req, res) => {
   var sess = req.session;
   mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
     res.send(aths);
+    res.end();
   })
 })
 
@@ -76,6 +78,7 @@ router.get('/autoLog', (req, res) => {
   mongoInstance.getUserByEmail(tmpUser.email, (user) => {
     sess.user = user;
     res.send('http://localhost:3000/main');
+    res.end();
   })
 
 });
@@ -102,6 +105,19 @@ router.get('/main', (req, res) => {
 })
 
 
+router.post("/acceptAthlete",(req,res)=>{
+  var athlete = req.body.athlete;
+  var competitions = req.body.competitions;
+  var data = req.body.data;
+  console.log(athlete);
+  console.log(competitions);
+  mongoInstance.subscribeMultipleCompetitions(athlete,competitions,data,(done)=>{
+    console.log("finito");
+    res.send(done);
+    res.end();
+  })
+})
+
 router.post('/addInfo', (req, res) => {
   var sess = req.session;
   var fields = req.body.fields;
@@ -117,6 +133,7 @@ router.post('/addInfo', (req, res) => {
         sess.user[fields[i]] = values[i];
       }
       res.send(updated);
+      res.end();
     }
   })
 })
@@ -125,6 +142,7 @@ router.get('/getActions', (req, res) => {
   var role = req.query.role;
   mongoInstance.getActions(role, (acts) => {
     res.send(acts);
+    res.end();
   })
 })
 
@@ -175,8 +193,10 @@ router.post("/addAthletes", (req, res) => {
     mongoInstance.getUserByEmail(user.email, (updatedUser) => {
       sess.user = updatedUser;
       mongoInstance.setAthletesTrainer(req.body.athletes, user, (set) => {
-        if (set)
+        if (set){
           res.send(set);
+          res.end();
+        }
       })
     })
   })
@@ -226,6 +246,7 @@ router.post('/signup', function (req, res, next) {
               subscriptions: []
             };
             res.send(success);
+            res.end();
           })
       })
 

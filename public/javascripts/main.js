@@ -20,7 +20,16 @@ $(document).ready(function () {
   })
 
   socket.on("trainer-subscribed", (data) => {
-    Materialize.toast("Il tuo allenatore ti ha iscritto a: " + data.description, 6000);
+    var subscribed = "Il tuo allenatore ti ha iscritto a: ";
+    if($.isArray(data)){
+      data.forEach(function(competition){
+        subscribed+= competition.description+", ";
+      });
+      subscribed = subscribed.substring(0,subscribed.length-2);
+    }else{
+      subscribed+= data.description;
+    }
+    Materialize.toast(subscribed, 6000);
   })
   /*gapi.load('auth2', function () {
     gapi.auth2.init();
@@ -100,8 +109,36 @@ $("#richieste").click(function(){
       $(".content").empty();
       $(".content").append(response);
       $(".collapsible").collapsible();
+      var check = false;
       $(".checkAll").click(function(){
-        
+        var currentId = $(".checkAll").attr("id");
+        $("."+currentId+ " ul li .collapsible-header ul li div .secondary-content input").each(function(index){
+          if($(this).attr("disabled") == undefined){
+            $(this).prop("checked",!check);
+          }
+        });
+        check = !check;
+      })
+      $(".subscribeSingle").click(function(){
+        var athId = $(this).data("athleteid");
+        var competitions = [];
+        $("."+athId+ " ul li .collapsible-header ul li div .secondary-content input").each(function(index){
+           if($(this).attr("disabled") == undefined && $(this).prop("checked")){
+            competitions.push($(this).attr("id"));
+           }
+        })
+        if(competitions.length == 0){
+          Materialize.toast("Devi selezionare le gare da accettare",2000);
+        }else{
+          $.post("http://localhost:3000/acceptAthlete", {
+          athlete: athId,
+          competitions: competitions,
+          data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
+        }, (response) => {
+          if (response)
+              Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
+        })
+        }
       })
   })
 })
