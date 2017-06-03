@@ -1,29 +1,24 @@
 <h1>Crea allenamento:</h1>
 <form>
     <div class="row">
-        <div class="input-field col s6">
-            <input id="first_name" type="text" class="validate">
-            <label for="first_name">Titolo</label>
-        </div>
-        <div class="input-field col s6">
-            <select>
-                <option disabled selected>Seleziona un mese</option>
-                <option value="Gennaio">Gennaio</option>
-                <option value="Febbraio">Febbraio</option>
-                <option value="Marzo">Marzo</option>
-                <option value="Aprile">Aprile</option>
-                <option value="Maggio">Maggio</option>
-                <option value="Giugno">Giugno</option>
-                <option value="Luglio">Luglio</option>
-                <option value="Agosto">Agosto</option>
-                <option value="Settembre">Settembre</option>
-                <option value="Ottobre">Ottobre</option>
-                <option value="Novembre">Novembre</option>
-                <option value="Dicembre">Dicembre</option>
-            </select>
-        </div>
+        <form action="#">
+            <div class="file-field input-field">
+                <div class="btn">
+                    <span>File</span>
+                    <input type="file" multiple>
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" placeholder="Scegli uno o più programmi di allenamento">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <ul class="collection">
+            
+        </ul>
     </div>
     <div class="row">
-        <a class="waves-effect waves-light btn"><i class="material-icons left">add</i>Aggiungi settimana</a>
+        <a class="upload waves-effect waves-light btn"><i class="material-icons left">add</i>Carica programmi</a>
     </div>
 </form>

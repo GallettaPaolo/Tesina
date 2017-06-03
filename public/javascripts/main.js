@@ -109,7 +109,10 @@ $(document).ready(function () {
       $(".content").empty();
       $(".content").append(response);
       $("select").material_select();
-    });
+     $('input[type="file"]').change(function(){
+        console.log($(this)[0].files[0].name);
+     })
+    });   
   })
 
   $("#richieste").click(function () {
