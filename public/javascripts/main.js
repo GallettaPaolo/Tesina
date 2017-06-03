@@ -104,15 +104,57 @@ $(document).ready(function () {
     $("#askmore").modal('open');
 
 
-  $("#allenamenti").click(function(){
+  $("#allenamenti").click(function () {
+    var programsToUpload = [];
     $.get("http://localhost:3000/addTrain", (response) => {
       $(".content").empty();
       $(".content").append(response);
       $("select").material_select();
-     $('input[type="file"]').change(function(){
-        console.log($(this)[0].files[0].name);
-     })
-    });   
+      $('input[type="file"]').change(function () {
+        var files = $('input[type="file"]')[0].files;
+        var reader = new FileReader();
+        function readFiles(file) {
+          console.log("Dovrei leggere: " + file)
+          reader.onload = function () {
+            updatePrograms({ name: file.name, content: this.result });
+          };
+          reader.readAsDataURL(file);
+        }
+        function updatePrograms(objToPush) {
+          programsToUpload.push(objToPush);
+          if (programsToUpload.length == files.length) {
+            $(".toastTitle").text("I file sono pronti per essere caricati");
+            $(".preloader-wrapper").remove();
+            $(".toastContent").append('<i class="material-icons green-text">done</i>')
+            $.get("/getTrainerAthletes", (athletes) => {
+              $("table").removeClass("hide");
+              var select = '<td><div class="input-field col s12 m6">'+
+              '<select class="icons" multiple>'+
+                '<option value ="Default" disabled selected >Seleziona gli atleti</option>';
+              athletes.forEach((athlete)=>{
+                select+= '<option value="'+athlete.email+'" data-icon="'+athlete.imgUrl+'" class="left circle">'+athlete.name+" "+athlete.surname+'</option>'
+              });
+              select += "</select></div></td>";
+              programsToUpload.forEach((file)=>{
+                $("tbody").append("<tr>");
+                $("tbody").append("<td>"+file.name+"</td>");
+                $("tbody").append(select);
+                $("tbody").append("</tr>");
+              });
+              $("select").material_select();
+            })
+            setTimeout(() => {
+              $(".toast").remove();
+            }, 2000)
+          }
+        }
+        if (files) {
+          var $toastContent = $('<div class="scale-transition toastContent valign-wrapper"><span class="toastTitle"style="margin-right:30px">Sto caricando i programmi</span><div class="preloader-wrapper small active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
+          Materialize.toast($toastContent);
+          [].forEach.call(files, readFiles);
+        }
+      })
+    });
   })
 
   $("#richieste").click(function () {
