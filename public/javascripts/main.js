@@ -106,12 +106,13 @@ $(document).ready(function () {
 
   $("#allenamenti").click(function () {
     var programsToUpload = [];
+    var files;
     $.get("http://localhost:3000/addTrain", (response) => {
       $(".content").empty();
       $(".content").append(response);
       $("select").material_select();
       $('input[type="file"]').change(function () {
-        var files = $('input[type="file"]')[0].files;
+        files = $('input[type="file"]')[0].files;
         var reader = new FileReader();
         function readFiles(file) {
           console.log("Dovrei leggere: " + file)
