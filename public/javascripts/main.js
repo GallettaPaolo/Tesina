@@ -11,7 +11,6 @@ $(document).ready(function () {
   var socket = io.connect("http://localhost:3000");
   socket.on("sendUserId", () => {
     var usrId = $(".usrImg").data("id");
-    console.log(usrId);
     socket.emit("athleteId", { userId: usrId });
   })
   socket.on("subscription", (data) => {
@@ -35,9 +34,10 @@ $(document).ready(function () {
     }
     Materialize.toast(subscribed, 6000);
   })
-  /*gapi.load('auth2', function () {
+  
+  gapi.load('auth2', function () {
     gapi.auth2.init();
-  });*/
+  });
 
   $.ajaxSetup({
     cache: true
@@ -64,7 +64,6 @@ $(document).ready(function () {
       $(".content").empty();
       $(".content").append(response);
       $(".subscribe").click(function () {
-        console.log("Invio iscrizione");
         $.post("http://localhost:3000/subscribe", {
           compId: $(this).data("code"),
           data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
@@ -73,7 +72,6 @@ $(document).ready(function () {
 
       $("#addGroup .modal-action").click(function () {
         var idsAthletes = [];
-        console.log("Iscrivo a: " + compCode);
         $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
           idsAthletes.push($(this).attr("id"));
         })
@@ -126,7 +124,6 @@ $(document).ready(function () {
         function readFiles(file) {
           var reader = new FileReader();
           reader.onload = function () {
-            console.log(this.result);
             updatePrograms({ name: file.name, content: this.result });
             reader.abort();
           };
@@ -135,7 +132,6 @@ $(document).ready(function () {
         function updatePrograms(objToPush) {
 
           programsToUpload.push(objToPush);
-          console.log(JSON.stringify(programsToUpload));
           if (programsToUpload.length == files.length) {
             $(".toastTitle").text("I file sono pronti per essere caricati");
             $(".preloader-wrapper").remove();
@@ -154,22 +150,21 @@ $(document).ready(function () {
                 });
                 select += "</select></div></td>";
                 $("tbody").append(select);
-                $("tbody").append('<td><i class="material-icons align-center delProgram" data-fileName="' + file.name + '">delete</i></td>');
+                $("tbody").append('<td><i style="cursor:pointer"class="material-icons align-center delProgram" data-fileName="' + file.name + '">delete</i></td>');
                 $("tbody").append("</tr>");
                 i++;
               });
-              $(".delProgram").click(() => {
+              $(".delProgram").click(function (){
                 var deleted = false;
                 for (var i = 0; i < programsToUpload.length && !deleted; i++) {
-                  console.log("Current file" + programsToUpload[i].name);
-                  var fileToRemove = $(".delProgram").data("filename");
-                  console.log(fileToRemove);
+
+                  var fileToRemove = $(this).data("filename");
                   if (programsToUpload[i].name == fileToRemove) {
                     programsToUpload.splice(i, 1);
                     deleted = true;
                   }
                 }
-                console.log(JSON.stringify(programsToUpload));
+
               })
               $("select").material_select();
             })
@@ -198,7 +193,6 @@ $(document).ready(function () {
             });
             athletesForRow.push({ athletes: newValuesArr });
           })
-          console.log(JSON.stringify(athletesForRow));
           var i = 0;
           programsToUpload.forEach((program) => {
             $.post("http://localhost:3000/storeProgram", {
@@ -206,7 +200,7 @@ $(document).ready(function () {
               content: program.content,
               athletesEmail: athletesForRow[i]
             }, (response) => {
-              console.log(response);
+
             })
             i++;
           })
@@ -333,13 +327,11 @@ $(document).ready(function () {
     if ($(".auth").data("auth") == "google") {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
-        console.log('User signed out.');
         $(location).attr("href", "http://localhost:3000/");
       });
     } else {
       if ($(".auth").data("auth") == "facebook") {
         FB.logout((response) => {
-          console.log("User signed out.")
           $(location).attr("href", "http://localhost:3000/")
         })
       } else {

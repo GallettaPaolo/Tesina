@@ -172,7 +172,7 @@ function MongoHelper() {
 
   var registerProgram = (emailAthletes, programUrl, db, callback) => {
     var userColl = db.collection('users');
-    userColl.updateMany({ email: { $in: emailAthletes } }, { $push: { trainings: programUrl } }, (err, r) => {
+    userColl.updateMany({ email: { $in: emailAthletes } }, { $push: { trainings: programUrl } },{upsert:true}, (err, r) => {
       assert.equal(err, null);
       assert.equal(emailAthletes.length, r.result.n);
       getAthletesWithEmail(emailAthletes, userColl, (athletes) => {
