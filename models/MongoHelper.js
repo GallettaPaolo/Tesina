@@ -175,16 +175,21 @@ function MongoHelper() {
     userColl.updateMany({ email: { $in: emailAthletes } }, { $push: { trainings: programUrl } }, (err, r) => {
       assert.equal(err, null);
       assert.equal(emailAthletes.length, r.result.n);
-      callback(true);
-      getAthletesWithEmail(emailAthletes,userColl,(athletes)=>{
-        console.log(athletes);
+      getAthletesWithEmail(emailAthletes, userColl, (athletes) => {
+        socketCallback("program-stored",{filter: athletes, data:""});
+        callback(true);
       })
+
     });
   }
   var getAthletesWithEmail = (emails, userColl, callback) => {
     userColl.find({ email: { $in: emails } }).toArray((err, arr) => {
       assert.equal(null, err);
-      callback(arr);
+      var ids = [];
+      arr.forEach((id)=>{
+        ids.push(id._id);
+      })
+      callback(ids);
     })
   }
 

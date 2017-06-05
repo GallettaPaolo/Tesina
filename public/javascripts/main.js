@@ -19,6 +19,10 @@ $(document).ready(function () {
     $("#iscrizioni").children(".badge").removeClass("hide");
   })
 
+  socket.on("program-stored",(data)=>{
+    Materialize.toast("Il tuo allenatore ha caricato un programma per te!",4000);
+  })
+
   socket.on("trainer-subscribed", (data) => {
     var subscribed = "Il tuo allenatore ti ha iscritto a: ";
     if ($.isArray(data)) {
