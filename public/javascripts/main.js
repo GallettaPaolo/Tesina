@@ -18,8 +18,8 @@ $(document).ready(function () {
     $("#iscrizioni").children(".badge").removeClass("hide");
   })
 
-  socket.on("program-stored",(data)=>{
-    Materialize.toast("Il tuo allenatore ha caricato un programma per te!",4000);
+  socket.on("program-stored", (data) => {
+    Materialize.toast("Il tuo allenatore ha caricato un programma per te!", 4000);
   })
 
   socket.on("trainer-subscribed", (data) => {
@@ -34,7 +34,7 @@ $(document).ready(function () {
     }
     Materialize.toast(subscribed, 6000);
   })
-  
+
   gapi.load('auth2', function () {
     gapi.auth2.init();
   });
@@ -119,42 +119,47 @@ $(document).ready(function () {
       $(".content").append(response);
       $("select").material_select();
       var athletesForRow = [];
+      var cnt = 0;
       $('input[type="file"]').change(function () {
         files = $('input[type="file"]')[0].files;
-        function readFiles(file) {
-          var reader = new FileReader();
-          reader.onload = function () {
-            updatePrograms({ name: file.name, content: this.result });
-            reader.abort();
-          };
-          reader.readAsDataURL(file);
-        }
+        if (files.length > 0){
+          function readFiles(file) {
+            var reader = new FileReader();
+            reader.onload = function () {
+              console.log("devo caricare");
+              updatePrograms({ name: file.name, content: this.result, shown: false });
+              reader.abort();
+            };
+            reader.readAsDataURL(file);
+          }
         function updatePrograms(objToPush) {
-
+          console.log("spingo");
           programsToUpload.push(objToPush);
-          if (programsToUpload.length == files.length) {
+          cnt++;
+          if (programsToUpload.length == cnt) {
             $(".toastTitle").text("I file sono pronti per essere caricati");
             $(".preloader-wrapper").remove();
             $(".toastContent").append('<i class="material-icons green-text">done</i>')
             $.get("/getTrainerAthletes", (athletes) => {
               $("table").removeClass("hide");
-              var i = 0;
+
+              var select = '<td><div class="input-field col s12 m6">' +
+                '<select class="icons athletesToChoose" multiple>' +
+                '<option value ="Default" disabled selected >Seleziona gli atleti</option>';
+              for (var i = 0; i < athletes.length; i++) {
+                var athlete = athletes[i];
+                select += '<option value="' + athlete.email + '" data-icon="' + athlete.imgUrl + '" class="left circle">' + athlete.name + " " + athlete.surname + '</option>'
+              }
+              select += "</select></div></td>";
+
               programsToUpload.forEach((file) => {
-                $("tbody").append("<tr>");
-                $("tbody").append("<td>" + file.name + "</td>");
-                var select = '<td><div class="input-field col s12 m6">' +
-                  '<select class="icons ' + i + '" multiple>' +
-                  '<option value ="Default" disabled selected >Seleziona gli atleti</option>';
-                athletes.forEach((athlete) => {
-                  select += '<option value="' + athlete.email + '" data-icon="' + athlete.imgUrl + '" class="left circle">' + athlete.name + " " + athlete.surname + '</option>'
-                });
-                select += "</select></div></td>";
-                $("tbody").append(select);
-                $("tbody").append('<td><i style="cursor:pointer"class="material-icons align-center delProgram" data-fileName="' + file.name + '">delete</i></td>');
-                $("tbody").append("</tr>");
-                i++;
+                if (!file.shown) {
+                  $("tbody").append("<tr><td>" + file.name + "</td>" + select + '<td><i style="cursor:pointer"class="material-icons align-center delProgram" data-fileName="' + file.name + '">delete</i></td></tr>');
+                  file.shown = true;
+                }
               });
-              $(".delProgram").click(function (){
+              $(".delProgram").click(function () {
+
                 var deleted = false;
                 for (var i = 0; i < programsToUpload.length && !deleted; i++) {
 
@@ -164,7 +169,14 @@ $(document).ready(function () {
                     deleted = true;
                   }
                 }
-
+                if (deleted) {
+                  var tmp = $(this).data("filename");
+                  $(this).parent().parent().remove();
+                  Materialize.toast("Il file: " + tmp + ", è stato rimosso dalla coda di upload", 4000);
+                  if (programsToUpload.length == 0)
+                    $("table").addClass("hide");
+                  cnt--;
+                }
               })
               $("select").material_select();
             })
@@ -178,166 +190,167 @@ $(document).ready(function () {
           Materialize.toast($toastContent);
           [].forEach.call(files, readFiles);
         }
+      }
       })
-      $(".upload").click(() => {
-        if (programsToUpload.length > 0) {
-          emailAthletes = [];
-          $("tbody tr").each((index) => {
-            var newValuesArr = [],
-              select = $("." + index);
-            ul = select.prev();
-            ul.children('li').toArray().forEach(function (li, i) {
-              if ($(li).hasClass('active')) {
-                newValuesArr.push(select.children('option').toArray()[i].value);
-              }
-            });
-            athletesForRow.push({ athletes: newValuesArr });
-          })
-          var i = 0;
-          programsToUpload.forEach((program) => {
-            $.post("http://localhost:3000/storeProgram", {
-              name: program.name,
-              content: program.content,
-              athletesEmail: athletesForRow[i]
-            }, (response) => {
+    $(".upload").click(function () {
+      if (programsToUpload.length > 0) {
+        emailAthletes = [];
+        $("tbody tr").each(function (index) {
+          var newValuesArr = [],
+            select = $(this).find(".athletesToChoose");
+          ul = select.prev();
+          ul.children('li').toArray().forEach(function (li, i) {
+            if ($(li).hasClass('active')) {
+              newValuesArr.push(select.children('option').toArray()[i].value);
+            }
+          });
+          athletesForRow.push({ athletes: newValuesArr });
+        })
+        var i = 0;
+        programsToUpload.forEach((program) => {
+          $.post("http://localhost:3000/storeProgram", {
+            name: program.name,
+            content: program.content,
+            athletesEmail: athletesForRow[i]
+          }, (response) => {
 
-            })
-            i++;
           })
+          i++;
+        })
+      }
+    })
+  });
+})
+
+$("#richieste").click(function () {
+  $.get("http://localhost:3000/subscriptionRequests", (response) => {
+    $(".content").empty();
+    $(".content").append(response);
+    $(".collapsible").collapsible();
+    var check = false;
+    $(".checkAll").click(function () {
+      var currentId = $(".checkAll").attr("id");
+      $("." + currentId + " ul li .collapsible-header ul li div .secondary-content input").each(function (index) {
+        if ($(this).attr("disabled") == undefined) {
+          $(this).prop("checked", !check);
+        }
+      });
+      check = !check;
+    })
+    $(".subscribeSingle").click(function () {
+      var athId = $(this).data("athleteid");
+      var competitions = [];
+      $("." + athId + " ul li .collapsible-header ul li div .secondary-content input").each(function (index) {
+        if ($(this).attr("disabled") == undefined && $(this).prop("checked")) {
+          competitions.push($(this).attr("id"));
         }
       })
-    });
-  })
-
-  $("#richieste").click(function () {
-    $.get("http://localhost:3000/subscriptionRequests", (response) => {
-      $(".content").empty();
-      $(".content").append(response);
-      $(".collapsible").collapsible();
-      var check = false;
-      $(".checkAll").click(function () {
-        var currentId = $(".checkAll").attr("id");
-        $("." + currentId + " ul li .collapsible-header ul li div .secondary-content input").each(function (index) {
-          if ($(this).attr("disabled") == undefined) {
-            $(this).prop("checked", !check);
-          }
-        });
-        check = !check;
-      })
-      $(".subscribeSingle").click(function () {
-        var athId = $(this).data("athleteid");
-        var competitions = [];
-        $("." + athId + " ul li .collapsible-header ul li div .secondary-content input").each(function (index) {
-          if ($(this).attr("disabled") == undefined && $(this).prop("checked")) {
-            competitions.push($(this).attr("id"));
-          }
+      if (competitions.length == 0) {
+        Materialize.toast("Devi selezionare le gare da accettare", 2000);
+      } else {
+        $.post("http://localhost:3000/acceptAthlete", {
+          athlete: athId,
+          competitions: competitions,
+          data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
+        }, (response) => {
+          if (response)
+            Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
         })
-        if (competitions.length == 0) {
-          Materialize.toast("Devi selezionare le gare da accettare", 2000);
-        } else {
-          $.post("http://localhost:3000/acceptAthlete", {
-            athlete: athId,
-            competitions: competitions,
-            data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
+      }
+    })
+  })
+})
+
+$(".rolesDiv select").change(() => {
+  var sel = $(".rolesDiv input").val().trim();
+  if (sel == "Atleta") {
+    $(".specDiv").removeClass("hide");
+    $(".rolesDiv").addClass("m7");
+  } else {
+    if ($(".rolesDiv").hasClass("m7")) {
+      $(".specDiv").addClass("hide");
+      $(".rolesDiv").removeClass("m7");
+    }
+  }
+})
+
+$(".addInfo").click(() => {
+  $.post("http://localhost:3000/addInfo", {
+    email: $(".email").text().trim(),
+    fields: ["role", "speciality"],
+    values: [$(".rolesDiv input").val().trim(), $(".specDiv input").val().trim()]
+  }, (response) => {
+    if (response)
+      $.get("http://localhost:3000/getActions?role=" + values[0], (acts) => {
+        $(".actions").empty();
+        $(".actions").append('<li><a id="' + acts[0].action.toLowerCase() + '" class="waves-effect ' + acts[0].action.toLowerCase() + '"><i class="material-icons"> ' + acts[0].icon + '  </i>  ' + acts[0].action + ' </a></li>')
+        $.each(acts, (i, act) => {
+          $(".actions").append('<li><a id="' + act.action.toLowerCase() + '" class="waves-effect ' + act.action.toLowerCase() + '"><i class="material-icons"> ' + act.icon + '  </i>  ' + act.action + ' </a></li>')
+        })
+        $(".actions").append('<li><a id="' + acts[acts.length - 1].action.toLowerCase() + '" class="waves-effect ' + acts[acts.length - 1].action.toLowerCase() + '"><i class="material-icons"> ' + acts[acts.length - 1].icon + '  </i>  ' + acts[acts.length - 1].action + ' </a></li>')
+      })
+  })
+})
+
+$("#iscrizioni").click(function () {
+  $.get("http://localhost:3000/subscriptions", (response) => {
+    $(".content").empty();
+    $(".content").append(response);
+    $('.collapsible').collapsible();
+  });
+})
+
+$("#gruppo").click(function () {
+  $.get("http://localhost:3000/athleteGroup", (response) => {
+    $(".content").empty();
+    $(".content").append(response);
+    $('.collapsible').collapsible();
+    $(".addGroup").click(function () {
+      $(".athletes").empty();
+      $.get("http://localhost:3000/allAthletes", (response) => {
+        response.forEach(function (element) {
+          $(".athletes").append(
+            '<li class="collection-item avatar">'
+            + ' <img src="' + element.imgUrl + '" alt="" class="circle">'
+            + ' <p>' + element.name + ' <br>' + element.surname + '</p>'
+            + '  <p href="#!" class="secondary-content"><input id="' + element._id + '" type="checkbox" /><label for="' + element._id + '"></label></p>'
+            + '</li>'
+          );
+        }, this);
+        $("#addGroup").modal('open')
+        $("#addGroup .modal-action").click(function () {
+          var idsAthletes = [];
+          $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
+            idsAthletes.push($(this).attr("id"));
+          })
+          $.post("http://localhost:3000/addAthletes", {
+            athletes: idsAthletes
           }, (response) => {
             if (response)
-              Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
+              $("#gruppo").trigger("click");
           })
-        }
+        })
       })
     })
   })
+})
 
-  $(".rolesDiv select").change(() => {
-    var sel = $(".rolesDiv input").val().trim();
-    if (sel == "Atleta") {
-      $(".specDiv").removeClass("hide");
-      $(".rolesDiv").addClass("m7");
-    } else {
-      if ($(".rolesDiv").hasClass("m7")) {
-        $(".specDiv").addClass("hide");
-        $(".rolesDiv").removeClass("m7");
-      }
-    }
-  })
 
-  $(".addInfo").click(() => {
-    $.post("http://localhost:3000/addInfo", {
-      email: $(".email").text().trim(),
-      fields: ["role", "speciality"],
-      values: [$(".rolesDiv input").val().trim(), $(".specDiv input").val().trim()]
-    }, (response) => {
-      if (response)
-        $.get("http://localhost:3000/getActions?role=" + values[0], (acts) => {
-          $(".actions").empty();
-          $(".actions").append('<li><a id="' + acts[0].action.toLowerCase() + '" class="waves-effect ' + acts[0].action.toLowerCase() + '"><i class="material-icons"> ' + acts[0].icon + '  </i>  ' + acts[0].action + ' </a></li>')
-          $.each(acts, (i, act) => {
-            $(".actions").append('<li><a id="' + act.action.toLowerCase() + '" class="waves-effect ' + act.action.toLowerCase() + '"><i class="material-icons"> ' + act.icon + '  </i>  ' + act.action + ' </a></li>')
-          })
-          $(".actions").append('<li><a id="' + acts[acts.length - 1].action.toLowerCase() + '" class="waves-effect ' + acts[acts.length - 1].action.toLowerCase() + '"><i class="material-icons"> ' + acts[acts.length - 1].icon + '  </i>  ' + acts[acts.length - 1].action + ' </a></li>')
-        })
-    })
-  })
-
-  $("#iscrizioni").click(function () {
-    $.get("http://localhost:3000/subscriptions", (response) => {
-      $(".content").empty();
-      $(".content").append(response);
-      $('.collapsible').collapsible();
+$(".logout").click(() => {
+  if ($(".auth").data("auth") == "google") {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      $(location).attr("href", "http://localhost:3000/");
     });
-  })
-
-  $("#gruppo").click(function () {
-    $.get("http://localhost:3000/athleteGroup", (response) => {
-      $(".content").empty();
-      $(".content").append(response);
-      $('.collapsible').collapsible();
-      $(".addGroup").click(function () {
-        $(".athletes").empty();
-        $.get("http://localhost:3000/allAthletes", (response) => {
-          response.forEach(function (element) {
-            $(".athletes").append(
-              '<li class="collection-item avatar">'
-              + ' <img src="' + element.imgUrl + '" alt="" class="circle">'
-              + ' <p>' + element.name + ' <br>' + element.surname + '</p>'
-              + '  <p href="#!" class="secondary-content"><input id="' + element._id + '" type="checkbox" /><label for="' + element._id + '"></label></p>'
-              + '</li>'
-            );
-          }, this);
-          $("#addGroup").modal('open')
-          $("#addGroup .modal-action").click(function () {
-            var idsAthletes = [];
-            $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
-              idsAthletes.push($(this).attr("id"));
-            })
-            $.post("http://localhost:3000/addAthletes", {
-              athletes: idsAthletes
-            }, (response) => {
-              if (response)
-                $("#gruppo").trigger("click");
-            })
-          })
-        })
+  } else {
+    if ($(".auth").data("auth") == "facebook") {
+      FB.logout((response) => {
+        $(location).attr("href", "http://localhost:3000/")
       })
-    })
-  })
-
-
-  $(".logout").click(() => {
-    if ($(".auth").data("auth") == "google") {
-      var auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        $(location).attr("href", "http://localhost:3000/");
-      });
     } else {
-      if ($(".auth").data("auth") == "facebook") {
-        FB.logout((response) => {
-          $(location).attr("href", "http://localhost:3000/")
-        })
-      } else {
-        $(location).attr("href", "http://localhost:3000/logout");
-      }
+      $(location).attr("href", "http://localhost:3000/logout");
     }
+  }
 
-  })
+})
 })

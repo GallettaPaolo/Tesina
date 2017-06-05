@@ -108,12 +108,14 @@ router.get("/addTrain", (req, res) => {
   res.render("addTrain");
 })
 
-router.get("/listTrainings",(req,res)=>{
+router.get("/listTrainings", (req, res) => {
   var sess = req.session;
-  res.render("listTrainings");
+  mongoInstance.getUserByEmail(sess.user.email, (user) => {
+    res.render("listTrainings",{trainings: user.trainings});
+  })
 })
 
-router.post("/storeProgram", (req, res) =>{
+router.post("/storeProgram", (req, res) => {
   console.log(JSON.stringify(req.body.athletesEmail));
   var content = req.body.content.substring(req.body.content.indexOf(","), req.body.content.length)
   console.log("File name: " + req.body.name + "atleti: " + JSON.stringify(req.body.athletesEmail));

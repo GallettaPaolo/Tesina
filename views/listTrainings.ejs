@@ -1,0 +1,28 @@
+<h1>Allenamenti:</h1>
+<%if(trainings == undefined || trainings== null || trainings.length == 0){%>
+    <h5 class="grey-text"><i class="material-icons">error</i><span class="valign"> Ops... Il tuo allenatore non ti ha ancora assegnato un allenamento</span></h5>
+    <%}else{%>
+        <ul class="collapsible popout" data-collapsible="accordion">
+            <%trainings.forEach(function(training){%>
+                <li>
+                    <div class="collapsible-header">
+                        <ul class="collection">
+                            <li>
+                                <span>
+                                <i class="material-icons">assignment</i>
+                                <%= training.name%>
+                                </span>
+                                <p class="secondary-content">
+                                    <%if(training.seen == false){%>
+                                        <span class="new badge"></span>
+                                        <%}%>
+                                            <a href="http://localhost:3000<%=training.url%>"><i class="material-icons black-text download">file_download</i></a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                </li>
+                <%})%>
+        </ul>
+        <%}%>
