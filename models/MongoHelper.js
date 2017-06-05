@@ -146,6 +146,48 @@ function MongoHelper() {
     })
   }
 
+  this.getPrograms = (email, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      listPrograms(email, db, (list) => {
+        callback(list);
+      })
+    })
+  }
+
+  var listPrograms = (email, db, callback) => {
+    var userColl = db.collection("users");
+
+  }
+
+  this.pushProgram = (emailAthletes, programUrl, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      registerProgram(emailAthletes, programUrl, db, (registered) => {
+        db.close();
+        callback(registered);
+      })
+    })
+  }
+
+  var registerProgram = (emailAthletes, programUrl, db, callback) => {
+    var userColl = db.collection('users');
+    userColl.updateMany({ email: { $in: emailAthletes } }, { $push: { trainings: programUrl } }, (err, r) => {
+      assert.equal(err, null);
+      assert.equal(emailAthletes.length, r.result.n);
+      callback(true);
+      getAthletesWithEmail(emailAthletes,userColl,(athletes)=>{
+        console.log(athletes);
+      })
+    });
+  }
+  var getAthletesWithEmail = (emails, userColl, callback) => {
+    userColl.find({ email: { $in: emails } }).toArray((err, arr) => {
+      assert.equal(null, err);
+      callback(arr);
+    })
+  }
+
   var addAthletesIntoTrainer = (idsAthletes, user, db, callback) => {
     var userColl = db.collection('users');
     userColl.update({ email: user.email }, { $push: { athletes: { $each: idsAthletes } } }, (err, r) => {
@@ -177,7 +219,7 @@ function MongoHelper() {
       assert.equal(err, null);
       assert.equal(objectIds.length, r.result.n);
       getAthletesIdArray(idsAthletes, userColl, (athletes) => {
-        var trainerFullName = user.name + " " + user.surname; 
+        var trainerFullName = user.name + " " + user.surname;
         for (var i = 0; i < athletes.length; i++) {
           socketCallback("trainer-set", { athlete: athletes[i], trainer: trainerFullName })
         }

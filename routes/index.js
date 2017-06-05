@@ -14,7 +14,7 @@ router.get('/', function (req, res, next) {
 router.get("/subscriptions", (req, res) => {
   var sess = req.session;
   mongoInstance.getAthleteSubscriptions(sess.user.email, (subscriptions) => {
-    console.log("Gare prelevate dall'utente: "+JSON.stringify(subscriptions))
+    console.log("Gare prelevate dall'utente: " + JSON.stringify(subscriptions))
     mongoInstance.getCompetitionsWithinArray(subscriptions, (comp) => {
       console.log(comp)
       res.render('subscriptions', {
@@ -25,24 +25,24 @@ router.get("/subscriptions", (req, res) => {
   })
 })
 
-router.get("/subscriptionRequests",(req,res)=>{
+router.get("/subscriptionRequests", (req, res) => {
   var sess = req.session;
-  mongoInstance.getAthletesWithIds(sess.user.athletes,(aths)=>{
+  mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
     var totCompetitions = [];
-    for(var i = 0; i < aths.length; i++){
-      for(var j = 0; j < aths[i].subscriptions.length; j++){
+    for (var i = 0; i < aths.length; i++) {
+      for (var j = 0; j < aths[i].subscriptions.length; j++) {
         totCompetitions.push(aths[i].subscriptions[j]);
       }
     }
-    console.log("Gare totali di tutti gli atleti: "+totCompetitions);
-    mongoInstance.getCompetitionsWithinArray(totCompetitions,(comps)=>{
-      console.log("Gare prelevate: "+comps);
-        res.render('subscriptionsRequests',{
-          athletes: aths,
-          competitions: comps
-        })
+    console.log("Gare totali di tutti gli atleti: " + totCompetitions);
+    mongoInstance.getCompetitionsWithinArray(totCompetitions, (comps) => {
+      console.log("Gare prelevate: " + comps);
+      res.render('subscriptionsRequests', {
+        athletes: aths,
+        competitions: comps
+      })
     })
-    
+
   })
 })
 
@@ -104,17 +104,38 @@ router.get('/main', (req, res) => {
   });
 })
 
-router.get("/addTrain",(req,res)=>{
+router.get("/addTrain", (req, res) => {
   res.render("addTrain");
 })
 
-router.post("/acceptAthlete",(req,res)=>{
+router.get("/listTrainings",(req,res)=>{
+  var sess = req.session;
+  res.render("listTrainings");
+})
+
+router.post("/storeProgram", (req, res) =>{
+  console.log(JSON.stringify(req.body.athletesEmail));
+  var content = req.body.content.substring(req.body.content.indexOf(","), req.body.content.length)
+  console.log("File name: " + req.body.name + "atleti: " + JSON.stringify(req.body.athletesEmail));
+  fileSystemHelper.storeProgram(req.body.name, content, (stored) => {
+    if (stored) {
+      mongoInstance.pushProgram(req.body.athletesEmail.athletes, stored, (registered) => {
+
+        res.send(true);
+        res.end();
+
+      })
+    }
+  })
+})
+
+router.post("/acceptAthlete", (req, res) => {
   var athlete = req.body.athlete;
   var competitions = req.body.competitions;
   var data = req.body.data;
   console.log(athlete);
   console.log(competitions);
-  mongoInstance.subscribeMultipleCompetitions(athlete,competitions,data,(done)=>{
+  mongoInstance.subscribeMultipleCompetitions(athlete, competitions, data, (done) => {
     res.send(done);
     res.end();
   })
@@ -180,7 +201,7 @@ router.post("/subscribeAthlete", (req, res) => {
   var athletes = req.body.athletes;
   var competition = req.body.competition;
   var data = req.body.data;
-  console.log("Gara alla quale iscrivere un atleta: "+competition);
+  console.log("Gara alla quale iscrivere un atleta: " + competition);
   mongoInstance.subscribeAthletes(athletes, competition, data, (subscribed) => {
     if (subscribed)
       res.send("True");
@@ -195,7 +216,7 @@ router.post("/addAthletes", (req, res) => {
     mongoInstance.getUserByEmail(user.email, (updatedUser) => {
       sess.user = updatedUser;
       mongoInstance.setAthletesTrainer(req.body.athletes, user, (set) => {
-        if (set){
+        if (set) {
           res.send(set);
           res.end();
         }

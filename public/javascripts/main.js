@@ -48,7 +48,12 @@ $(document).ready(function () {
 
   $("#askmore").modal();
   $("#addGroup").modal();
-
+  $("#listaallenamenti").click(function () {
+    $.get("http://localhost:3000/listTrainings", (response) => {
+      $(".content").empty();
+      $(".content").append(response);
+    })
+  })
   $("#calendario").click(function () {
     var compCode;
     $.get("http://localhost:3000/competitions", (response) => {
@@ -111,37 +116,57 @@ $(document).ready(function () {
       $(".content").empty();
       $(".content").append(response);
       $("select").material_select();
+      var athletesForRow = [];
       $('input[type="file"]').change(function () {
         files = $('input[type="file"]')[0].files;
-        var reader = new FileReader();
         function readFiles(file) {
-          console.log("Dovrei leggere: " + file)
+          var reader = new FileReader();
           reader.onload = function () {
+            console.log(this.result);
             updatePrograms({ name: file.name, content: this.result });
+            reader.abort();
           };
           reader.readAsDataURL(file);
         }
         function updatePrograms(objToPush) {
+
           programsToUpload.push(objToPush);
+          console.log(JSON.stringify(programsToUpload));
           if (programsToUpload.length == files.length) {
             $(".toastTitle").text("I file sono pronti per essere caricati");
             $(".preloader-wrapper").remove();
             $(".toastContent").append('<i class="material-icons green-text">done</i>')
             $.get("/getTrainerAthletes", (athletes) => {
               $("table").removeClass("hide");
-              var select = '<td><div class="input-field col s12 m6">'+
-              '<select class="icons" multiple>'+
-                '<option value ="Default" disabled selected >Seleziona gli atleti</option>';
-              athletes.forEach((athlete)=>{
-                select+= '<option value="'+athlete.email+'" data-icon="'+athlete.imgUrl+'" class="left circle">'+athlete.name+" "+athlete.surname+'</option>'
-              });
-              select += "</select></div></td>";
-              programsToUpload.forEach((file)=>{
+              var i = 0;
+              programsToUpload.forEach((file) => {
                 $("tbody").append("<tr>");
-                $("tbody").append("<td>"+file.name+"</td>");
+                $("tbody").append("<td>" + file.name + "</td>");
+                var select = '<td><div class="input-field col s12 m6">' +
+                  '<select class="icons ' + i + '" multiple>' +
+                  '<option value ="Default" disabled selected >Seleziona gli atleti</option>';
+                athletes.forEach((athlete) => {
+                  select += '<option value="' + athlete.email + '" data-icon="' + athlete.imgUrl + '" class="left circle">' + athlete.name + " " + athlete.surname + '</option>'
+                });
+                select += "</select></div></td>";
                 $("tbody").append(select);
+                $("tbody").append('<td><i class="material-icons align-center delProgram" data-fileName="' + file.name + '">delete</i></td>');
                 $("tbody").append("</tr>");
+                i++;
               });
+              $(".delProgram").click(() => {
+                var deleted = false;
+                for (var i = 0; i < programsToUpload.length && !deleted; i++) {
+                  console.log("Current file" + programsToUpload[i].name);
+                  var fileToRemove = $(".delProgram").data("filename");
+                  console.log(fileToRemove);
+                  if (programsToUpload[i].name == fileToRemove) {
+                    programsToUpload.splice(i, 1);
+                    deleted = true;
+                  }
+                }
+                console.log(JSON.stringify(programsToUpload));
+              })
               $("select").material_select();
             })
             setTimeout(() => {
@@ -153,6 +178,34 @@ $(document).ready(function () {
           var $toastContent = $('<div class="scale-transition toastContent valign-wrapper"><span class="toastTitle"style="margin-right:30px">Sto caricando i programmi</span><div class="preloader-wrapper small active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
           Materialize.toast($toastContent);
           [].forEach.call(files, readFiles);
+        }
+      })
+      $(".upload").click(() => {
+        if (programsToUpload.length > 0) {
+          emailAthletes = [];
+          $("tbody tr").each((index) => {
+            var newValuesArr = [],
+              select = $("." + index);
+            ul = select.prev();
+            ul.children('li').toArray().forEach(function (li, i) {
+              if ($(li).hasClass('active')) {
+                newValuesArr.push(select.children('option').toArray()[i].value);
+              }
+            });
+            athletesForRow.push({ athletes: newValuesArr });
+          })
+          console.log(JSON.stringify(athletesForRow));
+          var i = 0;
+          programsToUpload.forEach((program) => {
+            $.post("http://localhost:3000/storeProgram", {
+              name: program.name,
+              content: program.content,
+              athletesEmail: athletesForRow[i]
+            }, (response) => {
+              console.log(response);
+            })
+            i++;
+          })
         }
       })
     });

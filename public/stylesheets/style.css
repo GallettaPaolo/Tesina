@@ -41,6 +41,10 @@ nav ul a, nav .brand-logo {
   margin-left: 20px;
 }
 
+.dropdown-content{
+  z-index:2;
+}
+
 .reduceSize{
   width:60px;
   height: 60px;
