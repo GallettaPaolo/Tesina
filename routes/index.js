@@ -115,6 +115,15 @@ router.post("/setSeen",(req,res)=>{
   })
 })
 
+router.get("/athleteTrainings",(req,res)=>{
+  var sess = req.session;
+  mongoInstance.getAthletesWithIds(sess.user.athletes,(athletes)=>{
+    res.render("athletesTrainings",{
+      athletes: athletes
+    });
+  })
+})
+
 router.get("/addTrain", (req, res) => {
   res.render("addTrain");
 })
