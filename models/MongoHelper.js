@@ -127,6 +127,40 @@ function MongoHelper() {
 
   }
 
+  this.setProgramSeen = (email,program,date,callback)=>{
+    MongoClient.connect(url,(err,db)=>{
+      assert.equal(null,err);
+      setSeen(email,program,date,db,(set)=>{
+        db.close();
+        callback(set);
+      })
+    })
+  }
+  var setSeen = (email,program,date,db,callback)=>{
+    var userColl = db.collection("users");
+    getUserFromEmail(email,userColl,(user)=>{
+      var userTrainings = user.trainings;
+      var found = false;
+      var i;
+      for(i = 0; !found && i < userTrainings.length ; i++){
+        if(userTrainings[i].name == program){
+          found = true;
+        }
+      }
+      var setSeen = "trainings."+(i-1)+".seen";
+      var obj = {};
+      obj [setSeen] = date;
+      console.log(JSON.stringify(obj));
+      updatingUser(userColl,db,{email:email},obj,(updated)=>{
+        if(updated){
+          var fullName = user.name + " "+ user.surname;
+          socketCallback("program-seen",{filter: user.trainer, data: {name:fullName, program: program}});
+          callback(true);
+        }
+      })
+    })
+  }
+
   this.addAthletesToTrainer = (idsAthlete, user, callback) => {
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);

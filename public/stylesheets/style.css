@@ -36,6 +36,11 @@
   font-feature-settings: 'liga';
 }
 
+.centerize{
+  display: inline-block;
+  margin: 15px 0px 15px 0px;
+}
+
 nav ul a, nav .brand-logo {
   color: #444;
   margin-left: 20px;

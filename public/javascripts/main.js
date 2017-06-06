@@ -18,6 +18,10 @@ $(document).ready(function () {
     $("#iscrizioni").children(".badge").removeClass("hide");
   })
 
+  socket.on("program-seen",(data)=>{
+    Materialize.toast(data.name+ " ha visualizzato il programma: "+data.program,4000);
+  })
+
   socket.on("program-stored", (data) => {
     Materialize.toast("Il tuo allenatore ha caricato un programma per te!", 4000);
   })
@@ -56,6 +60,13 @@ $(document).ready(function () {
     $.get("http://localhost:3000/listTrainings", (response) => {
       $(".content").empty();
       $(".content").append(response);
+      $(".download").click(function(){
+        var today = date.getDate()+"/"+date.getMonth()+"/"+date.getFullYear();
+         $.post("/setSeen",{
+           program: $(this).data("program"),
+           date: today
+         })
+      })
     })
   })
   $("#calendario").click(function () {

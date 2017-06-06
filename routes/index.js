@@ -104,6 +104,17 @@ router.get('/main', (req, res) => {
   });
 })
 
+router.post("/setSeen",(req,res)=>{
+  var session = req.session;
+  mongoInstance.setProgramSeen(session.user.email,req.body.program,req.body.date,(set)=>{
+    console.log(set);
+    if(set){
+      res.send(true);
+      res.end();
+    }
+  })
+})
+
 router.get("/addTrain", (req, res) => {
   res.render("addTrain");
 })

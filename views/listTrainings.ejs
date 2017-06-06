@@ -8,7 +8,7 @@
                     <div class="collapsible-header">
                         <ul class="collection">
                             <li>
-                                <span>
+                                <span class="centerize">
                                 <i class="material-icons">assignment</i>
                                 <%= training.name%>
                                 </span>
@@ -16,12 +16,11 @@
                                     <%if(training.seen == false){%>
                                         <span class="new badge"></span>
                                         <%}%>
-                                            <a href="http://localhost:3000<%=training.url%>"><i class="material-icons black-text download">file_download</i></a>
+                                            <a href="http://localhost:3000<%=training.url%>"><i class="material-icons black-text download" data-program="<%=training.name%>">file_download</i></a>
                                 </p>
                             </li>
                         </ul>
                     </div>
-                    <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
                 </li>
                 <%})%>
         </ul>
