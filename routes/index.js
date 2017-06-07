@@ -65,7 +65,7 @@ router.get("/getTrainerAthletes", (req, res) => {
 router.get("/athleteGroup", (req, res) => {
   var sess = req.session;
   mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
-console.log(aths);
+    console.log(aths);
     res.render('athleteGroup', {
       user: sess.user,
       athletes: aths
@@ -82,14 +82,14 @@ router.get('/autoLog', (req, res) => {
     if (user == undefined) {
       mongoInstance.registerUser(tmpUser, (registered) => {
         if (registered) {
-          sess.user = tmpUser;
+          sess.user = user;
           res.send('http://localhost:3000/main');
           res.end();
         }
       })
     }
     else {
-      sess.user = tmpUser;
+      sess.user = user;
       res.send('http://localhost:3000/main');
       res.end();
     }
@@ -99,23 +99,20 @@ router.get('/autoLog', (req, res) => {
 
 router.get('/main', (req, res) => {
   var sess = req.session;
+  console.log("User maybe incomplete: "+JSON.stringify(sess.user));
   if (sess.user.role == undefined || sess.user.role == null)
     sess.user.isIncomplete = true;
   else
     sess.user.isIncomplete = false;
-  mongoInstance.getActions((sess.user.isIncomplete) ? "Atleta" : sess.user.role, (acts) => {
-    mongoInstance.getRoles((possibleRoles) => {
-      mongoInstance.getAthleteCategory((possibleCategories) => {
-        res.render('main', {
-          user: sess.user,
-          actions: acts,
-          roles: possibleRoles,
-          categories: possibleCategories
-        });
-      })
+  mongoInstance.getRoles((possibleRoles) => {
+    mongoInstance.getAthleteCategory((possibleCategories) => {
+      res.render('main', {
+        user: sess.user,
+        roles: possibleRoles,
+        categories: possibleCategories
+      });
     })
-
-  });
+  })
 })
 
 router.post("/setSeen", (req, res) => {
@@ -188,22 +185,17 @@ router.post('/addInfo', (req, res) => {
 
   mongoInstance.updateUser({ email: req.body.email }, fieldsToAdd, (updated) => {
     if (updated) {
-      for (var i = 0; i < fields.length; i++) {
-        sess.user[fields[i]] = values[i];
-      }
-      res.send(updated);
-      res.end();
+      mongoInstance.getUserByEmail(req.body.email, (user) => {
+        console.log("user: "+JSON.stringify(user));
+        sess.user = user;
+        res.send(updated);
+        res.end();
+      })
+
     }
   })
 })
 
-router.get('/getActions', (req, res) => {
-  var role = req.query.role;
-  mongoInstance.getActions(role, (acts) => {
-    res.send(acts);
-    res.end();
-  })
-})
 
 router.get('/register', (req, res) => {
   mongoInstance.getRoles((possibleRoles) => {
