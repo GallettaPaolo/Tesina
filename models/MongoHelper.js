@@ -246,7 +246,7 @@ function MongoHelper() {
       getAthletesIdArray(idsAthletes, userColl, (athletes) => {
         var trainerFullName = user.name + " " + user.surname;
         for (var i = 0; i < athletes.length; i++) {
-          socketCallback("trainer-set", { filter: athletes[i], data: trainerFullName })
+          socketCallback("trainer-set", { filter: athletes[i]._id, data: trainerFullName })
         }
         callback(true);
       })

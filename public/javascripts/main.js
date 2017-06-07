@@ -1,3 +1,4 @@
+var toastDuration = toastDuration;
 $(document).ready(function () {
   $('.button-collapse').sideNav({
     menuWidth: 300, // Default is 300
@@ -15,31 +16,31 @@ $(document).ready(function () {
   })
 
   socket.on("trainer-set", (data) => {
-    console.log("Hey:");
-    console.log(data);
-    Materialize.toast("Sei nel gruppo di allenamento di: " + data)
+    Materialize.toast("Sei nel gruppo di allenamento di: " + data, toastDuration)
   })
-  socket.on("subscription", function(data) {
-    console.log("Wow proco dio");
-    console.log(JSON.stringify(data));
-    if($(".role").text()== "Allenatore"){
-        Materialize.toast(data.name+" ha richiesto di iscriversi a: "+data.competition);
-    }else{
-          Materialize.toast("Richiesta inviata!", 2000);
+  socket.on("subscription", function (data) {
+    if ($("#iscrizioni").hasClass("selected"))
+      $("#iscrizioni").trigger("click");
+    if ($(".role").text() == "Allenatore") {
+      Materialize.toast(data.name + " ha richiesto di iscriversi a: " + data.competition, toastDuration);
+    } else {
+      Materialize.toast("Richiesta inviata!", toastDuration);
     }
 
   })
 
   socket.on("program-seen", (data) => {
-    Materialize.toast(data.name + " ha visualizzato il programma: " + data.program, 4000);
+    Materialize.toast(data.name + " ha visualizzato il programma: " + data.program, toastDuration);
   })
 
   socket.on("program-stored", (data) => {
-    Materialize.toast("Il tuo allenatore ha caricato un programma per te!", 4000);
+    Materialize.toast("Il tuo allenatore ha caricato un programma per te!", toastDuration);
   })
 
   socket.on("trainer-subscribed", (data) => {
     var subscribed = "Il tuo allenatore ti ha iscritto a: ";
+    if ($("#iscrizioni").hasClass("selected"))
+      $("#iscrizioni").trigger("click");
     if ($.isArray(data)) {
       data.forEach(function (competition) {
         subscribed += competition.description + ", ";
@@ -48,7 +49,7 @@ $(document).ready(function () {
     } else {
       subscribed += data.description;
     }
-    Materialize.toast(subscribed, 6000);
+    Materialize.toast(subscribed, toastDuration);
   })
 
   $.ajaxSetup({ async: false });
@@ -78,6 +79,8 @@ $(document).ready(function () {
 
 
   $("#athleteTrainings").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $(this).addClass("selected");
     $.get("http://localhost:3000/athleteTrainings", function (response) {
       $(".content").empty();
       $(".content").append(response);
@@ -86,6 +89,8 @@ $(document).ready(function () {
   })
 
   $("#listaallenamenti").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $("#listaallenamenti").addClass("selected");
     $.get("http://localhost:3000/listTrainings", (response) => {
       $(".content").empty();
       $(".content").append(response);
@@ -99,6 +104,8 @@ $(document).ready(function () {
     })
   })
   $("#calendario").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $(this).addClass("selected");
     var compCode;
     $.get("http://localhost:3000/competitions", (response) => {
       $(".content").empty();
@@ -141,7 +148,7 @@ $(document).ready(function () {
           data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
         }, (response) => {
           if (response)
-            Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
+            Materialize.toast('Gli atleti selezionati sono stati iscritti!', toastDuration)
         })
 
 
@@ -157,6 +164,8 @@ $(document).ready(function () {
 
 
   $("#allenamenti").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $(this).addClass("selected");
     var programsToUpload = [];
     var files;
     $.get("http://localhost:3000/addTrain", (response) => {
@@ -217,7 +226,7 @@ $(document).ready(function () {
                   if (deleted) {
                     var tmp = $(this).data("filename");
                     $(this).parent().parent().remove();
-                    Materialize.toast("Il file: " + tmp + ", è stato rimosso dalla coda di upload", 4000);
+                    Materialize.toast("Il file: " + tmp + ", è stato rimosso dalla coda di upload", toastDuration);
                     if (programsToUpload.length == 0)
                       $("table").addClass("hide");
                     cnt--;
@@ -231,7 +240,7 @@ $(document).ready(function () {
             }
           }
           if (files) {
-            var $toastContent = $('<div class="scale-transition toastContent valign-wrapper"><span class="toastTitle"style="margin-right:30px">Sto caricando i programmi</span><div class="preloader-wrapper small active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
+            var $toastContent = $('<div class="scale-transition toastContent valign-wrapper"><span class="toastTitle"style="margin-right:30px">Sto caricando i programmi</span><div class="preloader-wrapper small selected"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');
             Materialize.toast($toastContent);
             [].forEach.call(files, readFiles);
           }
@@ -245,20 +254,27 @@ $(document).ready(function () {
               select = $(this).find(".athletesToChoose");
             ul = select.prev();
             ul.children('li').toArray().forEach(function (li, i) {
-              if ($(li).hasClass('active')) {
+              if ($(li).hasClass('selected')) {
                 newValuesArr.push(select.children('option').toArray()[i].value);
               }
             });
             athletesForRow.push({ athletes: newValuesArr });
           })
           var i = 0;
+          var results = [];
           programsToUpload.forEach((program) => {
             $.post("http://localhost:3000/storeProgram", {
               name: program.name,
               content: program.content,
               athletesEmail: athletesForRow[i]
             }, (response) => {
-
+              if (response) {
+                results.push(response);
+                if (results.length == programsToUpload.length) {
+                  programsToUpload = [];
+                  $("tbody").empty();
+                }
+              }
             })
             i++;
           })
@@ -268,6 +284,8 @@ $(document).ready(function () {
   })
 
   $("#richieste").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $(this).addClass("selected");
     $.get("http://localhost:3000/subscriptionRequests", (response) => {
       $(".content").empty();
       $(".content").append(response);
@@ -291,7 +309,7 @@ $(document).ready(function () {
           }
         })
         if (competitions.length == 0) {
-          Materialize.toast("Devi selezionare le gare da accettare", 2000);
+          Materialize.toast("Devi selezionare le gare da accettare", toastDuration);
         } else {
           $.post("http://localhost:3000/acceptAthlete", {
             athlete: athId,
@@ -299,7 +317,7 @@ $(document).ready(function () {
             data: date.getDate() + "/" + date.getMonth() + "/" + date.getUTCFullYear()
           }, (response) => {
             if (response)
-              Materialize.toast('Gli atleti selezionati sono stati iscritti!', 4000) // 4000 is the duration of the toast
+              Materialize.toast('Gli atleti selezionati sono stati iscritti!', toastDuration)
           })
         }
       })
@@ -338,6 +356,8 @@ $(document).ready(function () {
   })
 
   $("#iscrizioni").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $(this).addClass("selected");
     $.get("http://localhost:3000/subscriptions", (response) => {
       $(".content").empty();
       $(".content").append(response);
@@ -346,6 +366,8 @@ $(document).ready(function () {
   })
 
   $("#gruppo").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected");
+    $(this).addClass("selected");
     $.get("http://localhost:3000/athleteGroup", (response) => {
       console.log("devo aggiongere")
       $(".content").empty();

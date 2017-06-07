@@ -6,7 +6,7 @@ var Helper = require('../models/FileSystemHelper');
 var fileSystemHelper = new Helper();
 router.get('/', function (req, res, next) {
   res.render('index', {
-    title: 'Express'
+    title: 'Athager &copy;'
   });
 });
 
@@ -99,7 +99,7 @@ router.get('/autoLog', (req, res) => {
 
 router.get('/main', (req, res) => {
   var sess = req.session;
-  console.log("User maybe incomplete: "+JSON.stringify(sess.user));
+  console.log("User maybe incomplete: " + JSON.stringify(sess.user));
   if (sess.user.role == undefined || sess.user.role == null)
     sess.user.isIncomplete = true;
   else
@@ -147,16 +147,12 @@ router.get("/listTrainings", (req, res) => {
 })
 
 router.post("/storeProgram", (req, res) => {
-  console.log(JSON.stringify(req.body.athletesEmail));
   var content = req.body.content.substring(req.body.content.indexOf(","), req.body.content.length)
-  console.log("File name: " + req.body.name + "atleti: " + JSON.stringify(req.body.athletesEmail));
   fileSystemHelper.storeProgram(req.body.name, content, (stored) => {
     if (stored) {
       mongoInstance.pushProgram(req.body.athletesEmail.athletes, stored, (registered) => {
-
         res.send(true);
         res.end();
-
       })
     }
   })
@@ -186,7 +182,7 @@ router.post('/addInfo', (req, res) => {
   mongoInstance.updateUser({ email: req.body.email }, fieldsToAdd, (updated) => {
     if (updated) {
       mongoInstance.getUserByEmail(req.body.email, (user) => {
-        console.log("user: "+JSON.stringify(user));
+        console.log("user: " + JSON.stringify(user));
         sess.user = user;
         res.send(updated);
         res.end();
@@ -231,9 +227,10 @@ router.post("/subscribeAthlete", (req, res) => {
   var data = req.body.data;
   console.log("Gara alla quale iscrivere un atleta: " + competition);
   mongoInstance.subscribeAthletes(athletes, competition, data, (subscribed) => {
-    if (subscribed)
+    if (subscribed) {
       res.send("True");
-    res.end();
+      res.end();
+    }
   })
 })
 

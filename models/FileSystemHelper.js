@@ -19,20 +19,31 @@ function FileSystemHelper() {
     fileSystem.writeFile(path.join(__dirname, userSubFolder + id + '/' + name), data, {
       encoding: 'base64'
     }, (err) => {
-      console.log("Scrittura file: "+ err);
+      console.log("Scrittura file: " + err);
       if (err) callback(err);
-      else callback(path.join("/"+id + '/' + name));
+      else callback(path.join("/" + id + '/' + name));
     });
   }
 
-  this.storeProgram = (name,data,callback)=>{
+  this.storeProgram = (name, data, callback) => {
+    fileSystem.exists(path.join(__dirname, programsSubFolder), (exists) => {
+      if (!exists)
+        fileSystem.mkdir(path.join(__dirname, programsSubFolder), (err) => {
+          if (err) console.log("Creazione cartella: " + err);
+          console.log("Cartella creata")
+          saveProgram(name, data, callback)
+        })
+    });
+  }
+
+  var saveProgram = (name, data, callback) => {
     var buffer = new Buffer(data, 'base64');
-    fileSystem.writeFile(path.join(__dirname,programsSubFolder+name),data.toString(),{encoding: 'base64'},
-  (err)=>{
-      console.log(err);
-      if(err) callback(err);
-      else callback(path.join("/"+ name))
-    })
+    fileSystem.writeFile(path.join(__dirname, programsSubFolder + name), data.toString(), { encoding: 'base64' },
+      (err) => {
+        console.log(err);
+        if (err) callback(err);
+        else callback(path.join("/" + name))
+      })
   }
 
 

@@ -7,10 +7,10 @@
             </div>
             <div class="collapsible-body <%= athlete._id%>">
                 <%
-                if(athlete.trainings.length > 0){
-                var athTrainings = athlete.trainings;
-                athTrainings.forEach(function(training){
-            %>
+                if(athlete.trainings!= undefined && athlete.trainings!= null && athlete.trainings.length  >0){
+                    var athTrainings = athlete.trainings;
+                    athTrainings.forEach(function(training){
+                %>
                     <ul class="collection">
                         <li>
                             <span class="centerize">
@@ -25,7 +25,11 @@
                             </p>
                         </li>
                     </ul>
-                    <%})}%>
+                    <%})}else{%>
+
+                    <h4>Non possiede ancora un programma</h4>
+
+                    <%}%>
             </div>
         </li>
         <%})%>

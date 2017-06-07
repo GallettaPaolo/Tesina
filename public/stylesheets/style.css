@@ -36,6 +36,10 @@
   font-feature-settings: 'liga';
 }
 
+.selected{
+  background-color: #e0e0e0;
+}
+
 .centerize{
   display: inline-block;
   margin: 15px 0px 15px 0px;
