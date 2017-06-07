@@ -101,7 +101,7 @@ function MongoHelper() {
       var filterOptions = [usrId, trainer];
       var athleteFullname = user.name + " " + user.surname;
       getCompetitionById(compId, db, (competition) => {
-        socketCallback("subscription", { filter: filterOptions, data: { name: athleteFullname, competition: competition } });
+        socketCallback("subscription", { filter: filterOptions, data: { name: athleteFullname, competition: competition.description } });
         callback(true);
       })
     })
