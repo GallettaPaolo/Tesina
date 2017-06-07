@@ -1,37 +1,55 @@
 <h1>Gruppo di atleti:</h1>
-    <% if(athletes == undefined || athletes == null || athletes.length == 0) {%>
-     <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
-     <%}%>
-    <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi al gruppo</a>
-    <% if(athletes != undefined || athletes != null || athletes.length != 0){%>
 
-        <ul class="collapsible popout" data-collapsible="accordion">
-            <% athletes.forEach(function(athlete){ %>
-                <li>
-                    <div class="collapsible-header"><img class="reduceSize circle" src=<%= athlete.imgUrl %> /> <%= athlete.name +" " + athlete.surname  %></div>
-                    <div class="collapsible-body">
-                        <div class="row">
-                            <div class="col s12 m2 l3">
-                                <span>Nome: <%= athlete.name%></span>
-                            </div>
-                            <div class="col s12 m2 l3">
-                                <span>Cognome: <%= athlete.surname%></span>
-                            </div>
-                            <div class="col s12 m2 l3">
-                                <span>Email: <%= athlete.email%></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12 m4 l4">
-                                <span>Specialità: <%= athlete.speciality%></span>
-                            </div>
-                            <div class="col s12 m5 l5">
-                                <span><%= (athlete.subscriptions != undefined)?"Numero richieste iscrizioni: "+athlete.subscriptions.length: "Non ha ancora alcuna iscrizione"%></span>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <% }) %>
+
+<div id="addGroup" class="modal bottom-sheet">
+    <div class="modal-header">
+        <h2>Scegli chi aggiungere al gruppo</h2>
+    </div>
+    <div class="modal-content">
+        <ul class="athletes collection">
 
         </ul>
-        <%}%>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aggiungi</a>
+    </div>
+</div>
+
+<% if(athletes == undefined || athletes == null || athletes.length == 0) {%>
+    <h5 class="grey-text">Ops ancora non hai un gruppo di atleti da allenare</h5>
+    <%}%>
+        <a class="addGroup waves-effect waves-light btn" href="#addGroup">Aggiungi al gruppo</a>
+        <% if(athletes != undefined || athletes != null || athletes.length != 0){%>
+
+            <ul class="collapsible popout" data-collapsible="accordion">
+                <% athletes.forEach(function(athlete){ %>
+                    <li>
+                        <div class="collapsible-header"><img class="reduceSize circle" src=<%=athlete.imgUrl %> />
+                            <%= athlete.name +" " + athlete.surname  %>
+                        </div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="col s12 m2 l3">
+                                    <span>Nome: <%= athlete.name%></span>
+                                </div>
+                                <div class="col s12 m2 l3">
+                                    <span>Cognome: <%= athlete.surname%></span>
+                                </div>
+                                <div class="col s12 m2 l3">
+                                    <span>Email: <%= athlete.email%></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m4 l4">
+                                    <span>Specialità: <%= athlete.speciality%></span>
+                                </div>
+                                <div class="col s12 m5 l5">
+                                    <span><%= (athlete.subscriptions != undefined)?"Numero richieste iscrizioni: "+athlete.subscriptions.length: "Non ha ancora alcuna iscrizione"%></span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <% }) %>
+
+            </ul>
+            <%}%>

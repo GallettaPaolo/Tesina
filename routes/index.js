@@ -56,6 +56,7 @@ router.get("/allAthletes", (req, res) => {
 router.get("/getTrainerAthletes", (req, res) => {
   var sess = req.session;
   mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
+    console.log(aths);
     res.send(aths);
     res.end();
   })
@@ -64,6 +65,7 @@ router.get("/getTrainerAthletes", (req, res) => {
 router.get("/athleteGroup", (req, res) => {
   var sess = req.session;
   mongoInstance.getAthletesWithIds(sess.user.athletes, (aths) => {
+console.log(aths);
     res.render('athleteGroup', {
       user: sess.user,
       athletes: aths
@@ -246,6 +248,7 @@ router.post("/subscribeAthlete", (req, res) => {
 router.post("/addAthletes", (req, res) => {
   var sess = req.session;
   var user = sess.user;
+  console.log(req.body.athletes);
   mongoInstance.addAthletesToTrainer(req.body.athletes, user, (added) => {
     mongoInstance.getUserByEmail(user.email, (updatedUser) => {
       sess.user = updatedUser;
@@ -302,7 +305,7 @@ router.post('/signup', function (req, res, next) {
               speciality: req.body.speciality,
               subscriptions: []
             };
-            res.send("http://localhost:3000/main");
+            res.send(success);
             res.end();
           })
       })

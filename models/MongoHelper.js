@@ -127,34 +127,34 @@ function MongoHelper() {
 
   }
 
-  this.setProgramSeen = (email,program,date,callback)=>{
-    MongoClient.connect(url,(err,db)=>{
-      assert.equal(null,err);
-      setSeen(email,program,date,db,(set)=>{
+  this.setProgramSeen = (email, program, date, callback) => {
+    MongoClient.connect(url, (err, db) => {
+      assert.equal(null, err);
+      setSeen(email, program, date, db, (set) => {
         db.close();
         callback(set);
       })
     })
   }
-  var setSeen = (email,program,date,db,callback)=>{
+  var setSeen = (email, program, date, db, callback) => {
     var userColl = db.collection("users");
-    getUserFromEmail(email,userColl,(user)=>{
+    getUserFromEmail(email, userColl, (user) => {
       var userTrainings = user.trainings;
       var found = false;
       var i;
-      for(i = 0; !found && i < userTrainings.length ; i++){
-        if(userTrainings[i].name == program){
+      for (i = 0; !found && i < userTrainings.length; i++) {
+        if (userTrainings[i].name == program) {
           found = true;
         }
       }
-      var setSeen = "trainings."+(i-1)+".seen";
+      var setSeen = "trainings." + (i - 1) + ".seen";
       var obj = {};
-      obj [setSeen] = date;
+      obj[setSeen] = date;
       console.log(JSON.stringify(obj));
-      updatingUser(userColl,db,{email:email},obj,(updated)=>{
-        if(updated){
-          var fullName = user.name + " "+ user.surname;
-          socketCallback("program-seen",{filter: user.trainer, data: {name:fullName, program: program}});
+      updatingUser(userColl, db, { email: email }, obj, (updated) => {
+        if (updated) {
+          var fullName = user.name + " " + user.surname;
+          socketCallback("program-seen", { filter: user.trainer, data: { name: fullName, program: program } });
           callback(true);
         }
       })
@@ -207,13 +207,13 @@ function MongoHelper() {
   var registerProgram = (emailAthletes, programUrl, db, callback) => {
     var userColl = db.collection('users');
     var tmp = new Date();
-    var today = tmp.getDate()+"/"+tmp.getMonth()+"/"+tmp.getFullYear();
-    var name = programUrl.substring(programUrl.indexOf("/")+1,programUrl.length);
-    userColl.updateMany({ email: { $in: emailAthletes } }, { $push: { trainings: {name: name,url:programUrl,assign: today,seen: false} } },{upsert:true}, (err, r) => {
+    var today = tmp.getDate() + "/" + tmp.getMonth() + "/" + tmp.getFullYear();
+    var name = programUrl.substring(programUrl.indexOf("/") + 1, programUrl.length);
+    userColl.updateMany({ email: { $in: emailAthletes } }, { $push: { trainings: { name: name, url: programUrl, assign: today, seen: false } } }, { upsert: true }, (err, r) => {
       assert.equal(err, null);
       assert.equal(emailAthletes.length, r.result.n);
       getAthletesWithEmail(emailAthletes, userColl, (athletes) => {
-        socketCallback("program-stored",{filter: athletes, data:""});
+        socketCallback("program-stored", { filter: athletes, data: "" });
         callback(true);
       })
 
@@ -223,7 +223,7 @@ function MongoHelper() {
     userColl.find({ email: { $in: emails } }).toArray((err, arr) => {
       assert.equal(null, err);
       var ids = [];
-      arr.forEach((id)=>{
+      arr.forEach((id) => {
         ids.push(id._id);
       })
       callback(ids);
@@ -254,9 +254,11 @@ function MongoHelper() {
   var setTrainer = (idsAthletes, user, db, callback) => {
     var userColl = db.collection('users');
     var objectIds = [];
-    for (var i = 0; i < idsAthletes.length; i++)
-      objectIds.push(new ObjectID(idsAthletes[i]));
-
+    idsAthletes.forEach((id)=>{
+      
+      objectIds.push(new ObjectID(id));
+    })
+    console.log(objectIds);
     userColl.updateMany({ _id: { $in: objectIds } }, { $set: { trainer: user._id } }, (err, r) => {
       assert.equal(err, null);
       assert.equal(objectIds.length, r.result.n);
@@ -484,9 +486,9 @@ function MongoHelper() {
 
   this.getCompetitionsWithinArray = (ids, callback) => {
     var objectIds = [];
-    for (var i = 0; i < ids.length; i++) {
-      objectIds.push(new ObjectID(ids[i].competition));
-    }
+    ids.forEach((id) => {
+      objectIds.push(new ObjectID(id.competition));
+    })
 
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);

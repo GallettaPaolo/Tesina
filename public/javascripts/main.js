@@ -14,10 +14,10 @@ $(document).ready(function () {
     socket.emit("athleteId", { userId: usrId });
   })
 
-  socket.on("trainer-set",(data)=>{
+  socket.on("trainer-set", (data) => {
     console.log("Hey:");
     console.log(data);
-    Materialize.toast("Sei nel gruppo di allenamento di: "+data)
+    Materialize.toast("Sei nel gruppo di allenamento di: " + data)
   })
   socket.on("subscription", (data) => {
     Materialize.toast("Richiesta inviata!", 2000);
@@ -69,7 +69,7 @@ $(document).ready(function () {
   $('select').material_select();
 
   $("#askmore").modal();
-  $("#addGroup").modal();
+
 
   $("#athleteTrainings").click(function () {
     $.get("http://localhost:3000/athleteTrainings", function (response) {
@@ -97,6 +97,7 @@ $(document).ready(function () {
     $.get("http://localhost:3000/competitions", (response) => {
       $(".content").empty();
       $(".content").append(response);
+      $("#subscribe").modal();
       $(".subscribe").click(function () {
         $.post("http://localhost:3000/subscribe", {
           compId: $(this).data("code"),
@@ -104,9 +105,10 @@ $(document).ready(function () {
         })
       })
 
-      $("#addGroup .modal-action").click(function () {
+      $("#subscribe .modal-action").click(function () {
+        console.log("Devo fare una registrazione");
         var idsAthletes = [];
-        $("#addGroup .modal-content ul li .secondary-content input:checked").each(function (element) {
+        $("#subscribe .modal-content ul li .secondary-content input:checked").each(function (element) {
           idsAthletes.push($(this).attr("id"));
         })
         $.post("http://localhost:3000/subscribeAthlete", {
@@ -120,11 +122,12 @@ $(document).ready(function () {
       })
 
       $(".subscribeAthlete").click(function () {
-        compCode = $(this).data("code");
+        var compCode = $(this).data("code");
         $.get("http://localhost:3000/getTrainerAthletes", (response) => {
-          $("#addGroup .athletes").empty();
+          console.log(JSON.stringify(response));
+          $("#subscribe .athletes").empty();
           response.forEach(function (element) {
-            $("#addGroup .athletes").append(
+            $("#subscribe .athletes").append(
               '<li class="collection-item avatar">'
               + ' <img src="' + element.imgUrl + '" alt="" class="circle">'
               + ' <p>' + element.name + ' <br>' + element.surname + '</p>'
@@ -132,7 +135,7 @@ $(document).ready(function () {
               + '</li>'
             );
           }, this);
-          $("#addGroup").modal('open');
+          $("#subscribe").modal('open');
         })
 
       })
@@ -336,8 +339,10 @@ $(document).ready(function () {
 
   $("#gruppo").click(function () {
     $.get("http://localhost:3000/athleteGroup", (response) => {
+      console.log("devo aggiongere")
       $(".content").empty();
       $(".content").append(response);
+      $("#addGroup").modal();
       $('.collapsible').collapsible();
       $(".addGroup").click(function () {
         $(".athletes").empty();
