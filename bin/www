@@ -59,14 +59,23 @@ io.on('connection', (socket) => {
     console.log("Evento: " + e);
     if (d.filter != undefined || d.filter != null) {
       var athletesId = d.filter;
-      sockets.forEach((elem) => {
-        athletesId.forEach((id) => {
-          if (id == elem.id) {
+      if (Array.isArray(athletesId)) {
+        sockets.forEach((elem) => {
+          athletesId.forEach((id) => {
+            if (id == elem.id) {
+              console.log("Invio al socket con id: " + elem.id + ", l'evento: " + e)
+              elem.conn.emit(e, (d != undefined || d != null) ? d.data : null);
+            }
+          })
+        })
+      } else {
+        sockets.forEach((elem) => {
+          if (elem.id == athletesId) {
             console.log("Invio al socket con id: " + elem.id + ", l'evento: " + e)
             elem.conn.emit(e, (d != undefined || d != null) ? d.data : null);
           }
         })
-      })
+      }
     }
   });
 })

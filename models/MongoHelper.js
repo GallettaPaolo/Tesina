@@ -13,7 +13,7 @@ function MongoHelper() {
    */
   var ObjectID = require('mongodb').ObjectID;
   var MongoClient = require('mongodb').MongoClient;
-  var url = "mongodb://localhost:27017/athletics";
+  var url = "mongodb://localhost:27017/Tesina";
   var assert = require("assert");
   var database;
   var socketCallback;
