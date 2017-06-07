@@ -44,6 +44,7 @@ var sockets = [];
 io.on('connection', (socket) => {
   socket.emit("sendUserId");
   socket.on("athleteId", (data) => {
+    console.log("Connesso: "+data.userId); 
     sockets.push({ id: data.userId, conn: socket });
   })
 

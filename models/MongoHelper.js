@@ -263,7 +263,7 @@ function MongoHelper() {
       getAthletesIdArray(idsAthletes, userColl, (athletes) => {
         var trainerFullName = user.name + " " + user.surname;
         for (var i = 0; i < athletes.length; i++) {
-          socketCallback("trainer-set", { athlete: athletes[i], trainer: trainerFullName })
+          socketCallback("trainer-set", { filter: athletes[i], data: trainerFullName })
         }
         callback(true);
       })
@@ -567,7 +567,7 @@ function MongoHelper() {
         db.close();
         if (!registered)
           success = "Error";
-        callback(success);
+        callback(true);
       })
     });
   }

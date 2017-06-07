@@ -73,12 +73,24 @@ router.get("/athleteGroup", (req, res) => {
 
 
 router.get('/autoLog', (req, res) => {
+  console.log("devo autologgare un account");
   var sess = req.session;
   var tmpUser = JSON.parse(req.query.curUser);
   mongoInstance.getUserByEmail(tmpUser.email, (user) => {
-    sess.user = user;
-    res.send('http://localhost:3000/main');
-    res.end();
+    if (user == undefined) {
+      mongoInstance.registerUser(tmpUser, (registered) => {
+        if (registered) {
+          sess.user = tmpUser;
+          res.send('http://localhost:3000/main');
+          res.end();
+        }
+      })
+    }
+    else {
+      sess.user = tmpUser;
+      res.send('http://localhost:3000/main');
+      res.end();
+    }
   })
 
 });
@@ -104,21 +116,21 @@ router.get('/main', (req, res) => {
   });
 })
 
-router.post("/setSeen",(req,res)=>{
+router.post("/setSeen", (req, res) => {
   var session = req.session;
-  mongoInstance.setProgramSeen(session.user.email,req.body.program,req.body.date,(set)=>{
+  mongoInstance.setProgramSeen(session.user.email, req.body.program, req.body.date, (set) => {
     console.log(set);
-    if(set){
+    if (set) {
       res.send(true);
       res.end();
     }
   })
 })
 
-router.get("/athleteTrainings",(req,res)=>{
+router.get("/athleteTrainings", (req, res) => {
   var sess = req.session;
-  mongoInstance.getAthletesWithIds(sess.user.athletes,(athletes)=>{
-    res.render("athletesTrainings",{
+  mongoInstance.getAthletesWithIds(sess.user.athletes, (athletes) => {
+    res.render("athletesTrainings", {
       athletes: athletes
     });
   })
@@ -131,7 +143,7 @@ router.get("/addTrain", (req, res) => {
 router.get("/listTrainings", (req, res) => {
   var sess = req.session;
   mongoInstance.getUserByEmail(sess.user.email, (user) => {
-    res.render("listTrainings",{trainings: user.trainings});
+    res.render("listTrainings", { trainings: user.trainings });
   })
 })
 
@@ -290,7 +302,7 @@ router.post('/signup', function (req, res, next) {
               speciality: req.body.speciality,
               subscriptions: []
             };
-            res.send(success);
+            res.send("http://localhost:3000/main");
             res.end();
           })
       })

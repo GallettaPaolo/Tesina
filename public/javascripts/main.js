@@ -13,6 +13,12 @@ $(document).ready(function () {
     var usrId = $(".usrImg").data("id");
     socket.emit("athleteId", { userId: usrId });
   })
+
+  socket.on("trainer-set",(data)=>{
+    console.log("Hey:");
+    console.log(data);
+    Materialize.toast("Sei nel gruppo di allenamento di: "+data)
+  })
   socket.on("subscription", (data) => {
     Materialize.toast("Richiesta inviata!", 2000);
     $("#iscrizioni").children(".badge").removeClass("hide");
@@ -39,9 +45,17 @@ $(document).ready(function () {
     Materialize.toast(subscribed, 6000);
   })
 
-  gapi.load('auth2', function () {
-    gapi.auth2.init();
+  $.ajaxSetup({ async: false });
+  r = Math.round(Math.random() * 10000);
+  $.get("http://yoursite.com/somefile.png", { subins: r }, function (d) {
+    gapi.load('auth2', function () {
+      gapi.auth2.init();
+    });
+  }).error(function () {
+    ;
   });
+
+
 
   $.ajaxSetup({
     cache: true
@@ -58,7 +72,7 @@ $(document).ready(function () {
   $("#addGroup").modal();
 
   $("#athleteTrainings").click(function () {
-    $.get("http://localhost:3000/athleteTrainings",function(response){
+    $.get("http://localhost:3000/athleteTrainings", function (response) {
       $(".content").empty();
       $(".content").append(response);
       $(".collapsible").collapsible();

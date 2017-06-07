@@ -74,6 +74,7 @@ function setAutoLogin(user) {
       })
     })
   } else {
+    console.log("WTF");
     $.get("http://localhost:3000/autoLog", {
       curUser: JSON.stringify(user)
     }, (response) => {
@@ -88,7 +89,9 @@ function setAutoLogin(user) {
  */
 function onSignIn(googleUser) {
   var temp = googleUser.getBasicProfile();
+  console.log(JSON.stringify(temp));
   var currentUser = new User(temp.getGivenName(), temp.getFamilyName(), temp.getImageUrl(), temp.getEmail(), "google");
+  console.log(JSON.stringify(currentUser));
   setAutoLogin(currentUser);
 }
 
