@@ -9,6 +9,8 @@ $(document).ready(function () {
 
   var date = new Date();
 
+  $("footer").addClass("shiftFooter");
+
   var socket = io.connect("http://localhost:3000");
   socket.on("sendUserId", () => {
     var usrId = $(".usrImg").data("id");

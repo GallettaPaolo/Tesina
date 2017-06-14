@@ -466,18 +466,22 @@ function MongoHelper() {
 
 
   this.getCompetitionsWithinArray = (ids, callback) => {
-    var objectIds = [];
-    ids.forEach((id) => {
-      objectIds.push(new ObjectID(id.competition));
-    })
-
-    MongoClient.connect(url, (err, db) => {
-      assert.equal(null, err);
-      getCompFromArray(objectIds, db, (competitions) => {
-        db.close();
-        callback(competitions);
+    if (ids != undefined || ids != null) {
+      var objectIds = [];
+      ids.forEach((id) => {
+        objectIds.push(new ObjectID(id.competition));
       })
-    })
+
+      MongoClient.connect(url, (err, db) => {
+        assert.equal(null, err);
+        getCompFromArray(objectIds, db, (competitions) => {
+          db.close();
+          callback(competitions);
+        })
+      })
+    }else{
+      callback([]);
+    }
   }
 
   var getCompFromArray = (ids, db, callback) => {

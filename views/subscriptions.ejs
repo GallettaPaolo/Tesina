@@ -1,6 +1,7 @@
 <h1>Iscrizioni</h1>
-<ul class="collapsible popout" data-collapsible="accordion">
-    <% competitions.forEach(function(competition){ 
+<%if(competitions != undefined || competitions != null || competitions.length >0){%>
+    <ul class="collapsible popout" data-collapsible="accordion">
+        <% competitions.forEach(function(competition){ 
         var subscription;
         var found = false;
         for(var i = 0; !found && i < subscriptions.length; i++){
@@ -10,26 +11,37 @@
             }
         }
         %>
-    <li>
-       <div class="collapsible-header"><i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null || subscription.accepted == "")?"schedule":"done" %></i><%= competition.description  %></div>
-        <div class="collapsible-body">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data Gara</th>
-                        <th>Richiesta Iscrizione</th>
-                        <th>Accettata Iscrizione</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><%= competition.date %></td>
-                        <td><%= subscription.dateRequest %></td>
-                        <td><%= (subscription.accepted == undefined || subscription.accepted == null )?"/":subscription.accepted %></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </li>
-    <% }) %>
-</ul>
+            <li>
+                <div class="collapsible-header"><i class="material-icons"><%=(subscription.accepted == undefined || subscription.accepted == null || subscription.accepted == "")?"schedule":"done" %></i>
+                    <%= competition.description  %>
+                </div>
+                <div class="collapsible-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data Gara</th>
+                                <th>Richiesta Iscrizione</th>
+                                <th>Accettata Iscrizione</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <%= competition.date %>
+                                </td>
+                                <td>
+                                    <%= subscription.dateRequest %>
+                                </td>
+                                <td>
+                                    <%= (subscription.accepted == undefined || subscription.accepted == null )?"/":subscription.accepted %>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </li>
+            <% }) %>
+    </ul>
+    <%}else{%>
+        <h5 class="grey-text"><i class="material-icons">error</i><span class="valign"> Ops... Non hai ancora richiesto alcuna iscrizione</span></h5>
+        <%}%>
