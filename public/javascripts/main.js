@@ -9,7 +9,6 @@ $(document).ready(function () {
 
   var date = new Date();
 
-  $("footer").addClass("shiftFooter");
 
   var socket = io.connect("http://localhost:3000");
   socket.on("sendUserId", () => {
@@ -78,6 +77,14 @@ $(document).ready(function () {
   $('select').material_select();
 
   $("#askmore").modal();
+
+  $(".userView").click(function () {
+    $("#nav-mobile").find(".selected").removeClass("selected"); 
+    $.get("http://localhost:3000/changeProfileData", (response) => {
+      $(".content").empty();
+      $(".content").append(response);
+    })
+  })
 
 
   $("#athleteTrainings").click(function () {

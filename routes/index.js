@@ -46,6 +46,11 @@ router.get("/subscriptionRequests", (req, res) => {
   })
 })
 
+router.get("/changeProfileData",(req,res)=>{
+  var sess = req.session;
+  res.render("userData",{user:sess.user});
+})
+
 router.get("/allAthletes", (req, res) => {
   mongoInstance.getUserWithoutTrainer((users) => {
     res.send(users);

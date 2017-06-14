@@ -134,7 +134,7 @@ footer.page-footer {
 }
 
 .card .card-image img {
-  width: 35%;
+  width:25%;
   margin: auto;
 }
 
@@ -160,6 +160,10 @@ footer.page-footer {
 
 .background {
   background-color: #18ffff;
+}
+
+.center{
+  margin:auto;
 }
 
 .roundImg {
