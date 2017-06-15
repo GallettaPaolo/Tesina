@@ -79,10 +79,22 @@ $(document).ready(function () {
   $("#askmore").modal();
 
   $(".userView").click(function () {
-    $("#nav-mobile").find(".selected").removeClass("selected"); 
+    $("#nav-mobile").find(".selected").removeClass("selected");
     $.get("http://localhost:3000/changeProfileData", (response) => {
       $(".content").empty();
       $(".content").append(response);
+      $("#confirmPassword").keypress(function () {
+        if ($("#confirmPassword").val() != $("#password").val())
+          $("#confirmPassword").addClass("invalid");
+        else
+          $("#confirmPassword").removeClass("invalid");
+      });
+      $("#confirmPassword").blur(function () {
+        if ($("#confirmPassword").val() != $("#password").val())
+          $("#confirmPassword").addClass("invalid");
+        else
+          $("#confirmPassword").removeClass("invalid");
+      });
     })
   })
 

@@ -1,16 +1,38 @@
-<h1>I tuoi dati</h1>
+<h1>Il tuo profilo:
+</h1>
 <div class="container">
     <div class="row">
-        <div class="col s12 m3 l3">
-            <img class="circle" src="<%=user.imgUrl%>" />
+        <fieldset>
+            <div class="col s12 m3 l3">
+                <img class="circle" src="<%=user.imgUrl%>" />
+            </div>
+
+            <legend>Dati personali</legend>
+            <div class="input-field col s12 m4 l4">
+                <input value="<%=user.name%>" disabled id="name" type="text" class="validate">
+                <label class="active" for="name">Nome</label>
+            </div>
+            <div class="input-field col s12 m4 l4">
+                <input value="<%=user.surname%>" disabled id="surname" type="text" class="validate">
+                <label for="surname" class="active">Cognome</label>
+            </div>
+        </fieldset>
+    </div>
+    <div class="row">
+        <fieldset>
+            <legend>Cambio password</legend>
+        <div class="input-field col s12 m4 l4">
+            <input id="oldPsw" type="password" class="validate">
+            <label for="oldPsw">Password vecchia</label>
         </div>
         <div class="input-field col s12 m4 l4">
-            <input value="<%=user.name%>" id="name" type="text" class="validate">
-            <label class="active" for="name">Nome</label>
+            <input id="password" type="password" class="validate">
+            <label for="password">Password nuova</label>
         </div>
         <div class="input-field col s12 m4 l4">
-            <input value="<%=user.surname%>" id="surname" type="text" class="validate">
-            <label for="surname" class="active">Cognome</label>
+            <input id="confirmPassword" type="password" class="validate">
+            <label for="confirmPassword">Conferma password</label>
         </div>
+        </fieldset>
     </div>
 </div>
