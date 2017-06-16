@@ -3,8 +3,8 @@
 <div class="container">
     <div class="row">
         <fieldset>
-            <div class="col s12 m3 l3">
-                <img class="circle" src="<%=user.imgUrl%>" />
+            <div class=" col s12 m3 l3">
+                <img class="smallImg circle" src="<%=user.imgUrl%>" />
             </div>
 
             <legend>Dati personali</legend>
@@ -21,18 +21,31 @@
     <div class="row">
         <fieldset>
             <legend>Cambio password</legend>
-        <div class="input-field col s12 m4 l4">
-            <input id="oldPsw" type="password" class="validate">
-            <label for="oldPsw">Password vecchia</label>
-        </div>
-        <div class="input-field col s12 m4 l4">
-            <input id="password" type="password" class="validate">
-            <label for="password">Password nuova</label>
-        </div>
-        <div class="input-field col s12 m4 l4">
-            <input id="confirmPassword" type="password" class="validate">
-            <label for="confirmPassword">Conferma password</label>
-        </div>
+            <div class="input-field col s12 m4 l4">
+                <input id="oldPsw" type="password" class="validate">
+                <label for="oldPsw">Password vecchia</label>
+            </div>
+            <div class="input-field col s12 m4 l4">
+                <input id="password" type="password" class="validate">
+                <label for="password">Password nuova</label>
+            </div>
+            <div class="input-field col s12 m4 l4">
+                <input id="confirmPassword" type="password" class="validate">
+                <label for="confirmPassword">Conferma password</label>
+            </div>
+        </fieldset>
+    </div>
+    <div class="row">
+        <fieldset>
+            <legend>Allenatore</legend>
+            <%if(trainer !=undefined && trainer!= null){%>
+            <div class="col s12 m3 l3">
+                <img class="smallImg circle" src="<%=trainer.imgUrl%>" />
+            </div>
+            <%}
+            else{%>
+                <h5><i class="material-icons">error</i> Non hai ancora un allenatore</h5>
+                <%}%>
         </fieldset>
     </div>
 </div>

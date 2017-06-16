@@ -48,6 +48,7 @@ router.get("/subscriptionRequests", (req, res) => {
 
 router.get("/changeProfileData", (req, res) => {
   var sess = req.session;
+  console.log(sess.user.trainer);
   mongoInstance.getAthletesWithIds([sess.user.trainer], (trainer) => {
     res.render("userData", { user: sess.user, trainer: trainer[0] });
   });
@@ -321,6 +322,7 @@ router.post('/login', (req, res, next) => {
     var sess = req.session;
     sess.user = user;
     res.send("http://localhost:3000/main")
+    res.end();
   })(req, res, next);
 })
 

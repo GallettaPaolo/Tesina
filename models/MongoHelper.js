@@ -223,6 +223,7 @@ function MongoHelper() {
   }
 
   this.setAthletesTrainer = (idsAthletes, user, callback) => {
+
     MongoClient.connect(url, (err, db) => {
       assert.equal(null, err);
       setTrainer(idsAthletes, user, db, (set) => {
@@ -236,7 +237,6 @@ function MongoHelper() {
     var userColl = db.collection('users');
     var objectIds = [];
     idsAthletes.forEach((id) => {
-
       objectIds.push(new ObjectID(id));
     })
     console.log(objectIds);
@@ -426,19 +426,21 @@ function MongoHelper() {
     var competitionsColl = db.collection('competitions');
     var competitions = [];
     var dat = new Date();
-    var dateToQuery = dat.getDate() + "/" + dat.getMonth() + 1;
-
+    var dateToQuery = dat.getDate() + "/" + (parseInt(dat.getMonth()) + 1);
+    var dateToEnd = "1/" + (parseInt(dat.getMonth()) + 2);
+    console.log(dateToQuery + " " + dateToEnd)
     competitionsColl.find({}).toArray((err, coll) => {
-
       coll.forEach(function (element) {
-        competitions.push(element);
+        console.log(element.date + "" > dateToQuery && element.date + "" < dateToEnd);
+        if (element.date + "" > dateToQuery && element.date + "" < dateToEnd) {
+          competitions.push(element);
+        }
       }, this);
       findScales(db, (scales) => {
         competitions.forEach((elem) => {
           var index = scales.findIndex((item, i) => {
             return item.key == elem.scale
           })
-
           if (scales[index] != undefined)
             elem.scale = scales[index].name;
         })
@@ -479,7 +481,7 @@ function MongoHelper() {
           callback(competitions);
         })
       })
-    }else{
+    } else {
       callback([]);
     }
   }
