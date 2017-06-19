@@ -31,8 +31,10 @@ function FileSystemHelper() {
         fileSystem.mkdir(path.join(__dirname, programsSubFolder), (err) => {
           if (err) console.log("Creazione cartella: " + err);
           console.log("Cartella creata")
-          saveProgram(name, data, callback)
+          saveProgram(name, data, callback);
         })
+      else
+        saveProgram(name, data, callback);
     });
   }
 

@@ -157,6 +157,7 @@ router.get("/listTrainings", (req, res) => {
 router.post("/storeProgram", (req, res) => {
   var content = req.body.content.substring(req.body.content.indexOf(","), req.body.content.length)
   fileSystemHelper.storeProgram(req.body.name, content, (stored) => {
+  
     if (stored) {
       mongoInstance.pushProgram(req.body.athletesEmail.athletes, stored, (registered) => {
         res.send(true);

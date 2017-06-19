@@ -33,19 +33,34 @@
                 <input id="confirmPassword" type="password" class="validate">
                 <label for="confirmPassword">Conferma password</label>
             </div>
+
+            <button class="btn waves-effect waves-light right-align" type="submit" name="action">Cambia
+                <i class="material-icons right">send</i>
+            </button>
         </fieldset>
     </div>
     <div class="row">
         <fieldset>
             <legend>Allenatore</legend>
             <%if(trainer !=undefined && trainer!= null){%>
-            <div class="col s12 m3 l3">
-                <img class="smallImg circle" src="<%=trainer.imgUrl%>" />
-            </div>
-            <%}
+                <div class="col s12 m3 l3">
+                    <img class="smallImg circle" src="<%=trainer.imgUrl%>" />
+                </div>
+                <div class="col s12 m4 l4">
+                    <p>Nome:
+                        <%= trainer.name%>
+                    </p>
+                    <p>Cognome:
+                        <%= trainer.surname%>
+                    </p>
+                    <p>Email:
+                        <%= trainer.email%>
+                    </p>
+                </div>
+                <%}
             else{%>
-                <h5><i class="material-icons">error</i> Non hai ancora un allenatore</h5>
-                <%}%>
+                    <h5><i class="material-icons">error</i> Non hai ancora un allenatore</h5>
+                    <%}%>
         </fieldset>
     </div>
 </div>

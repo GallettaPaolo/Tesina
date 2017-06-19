@@ -95,6 +95,13 @@ $(document).ready(function () {
         else
           $("#confirmPassword").removeClass("invalid");
       });
+
+      $('button[type="submit"]').click(() => {
+        if ($("#oldPsw").val() != "" && $("#confirmPassword").val() != "" && $("#password").val() != "")
+          Materialize.toast("La password è stata cambiata!", 4000);
+        else
+          Materialize.toast("Devi impostare i campi prima!", 4000);
+      })
     })
   })
 
@@ -106,6 +113,7 @@ $(document).ready(function () {
       $(".content").empty();
       $(".content").append(response);
       $(".collapsible").collapsible();
+      $(".tooltipped").tooltip({delay:30});
     })
   })
 
@@ -115,6 +123,7 @@ $(document).ready(function () {
     $.get("http://localhost:3000/listTrainings", (response) => {
       $(".content").empty();
       $(".content").append(response);
+      $(".tooltipped").tooltip({delay:30});
       $(".download").click(function () {
         var today = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
         $.post("/setSeen", {
@@ -275,7 +284,9 @@ $(document).ready(function () {
               select = $(this).find(".athletesToChoose");
             ul = select.prev();
             ul.children('li').toArray().forEach(function (li, i) {
-              if ($(li).hasClass('selected')) {
+              console.log("Lista");
+              if ($(li).hasClass('active')) {
+                console.log(newValuesArr);
                 newValuesArr.push(select.children('option').toArray()[i].value);
               }
             });
@@ -283,6 +294,7 @@ $(document).ready(function () {
           })
           var i = 0;
           var results = [];
+          console.log(JSON.stringify(athletesForRow));
           programsToUpload.forEach((program) => {
             $.post("http://localhost:3000/storeProgram", {
               name: program.name,

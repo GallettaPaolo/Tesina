@@ -431,10 +431,8 @@ function MongoHelper() {
     console.log(dateToQuery + " " + dateToEnd)
     competitionsColl.find({}).toArray((err, coll) => {
       coll.forEach(function (element) {
-        console.log(element.date + "" > dateToQuery && element.date + "" < dateToEnd);
-        if (element.date + "" > dateToQuery && element.date + "" < dateToEnd) {
-          competitions.push(element);
-        }
+        competitions.push(element);
+
       }, this);
       findScales(db, (scales) => {
         competitions.forEach((elem) => {

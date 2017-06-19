@@ -19,7 +19,9 @@
                                 </span>
                             <p class="secondary-content">
                                 <%if(training.seen == false){%>
-                                    <i class="tooltipped" data-position="top" data-tooltip="Il programma non è ancora stato visto">schedule</i>
+                                    <i class="tooltipped material-icons black-text" data-position="top" data-tooltip="Il programma non è ancora stato visto">schedule</i>
+                                    <%}else{%>
+                                    <i class="tooltipped material-icons black-text" data-position="top" data-tooltip="Il programma è stato visualizzato il: <%=training.seen%>">done</i>
                                     <%}%>
                                         <a href="http://localhost:3000<%=training.url%>"><i class="material-icons black-text download" data-program="<%=training.name%>">file_download</i></a>
                             </p>

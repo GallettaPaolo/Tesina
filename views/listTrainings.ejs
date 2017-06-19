@@ -16,7 +16,7 @@
                                     <%if(training.seen == false){%>
                                         <span class="new badge"></span>
                                         <%}%>
-                                            <a href="http://localhost:3000<%=training.url%>"><i class="material-icons black-text download" data-program="<%=training.name%>">file_download</i></a>
+                                            <a href="http://localhost:3000<%=training.url%>"><i class="tooltipped material-icons black-text download" data-position="top" data-tooltip="Il programma ti è stato assegnato<%=training.assign%>" data-program="<%=training.name%>">file_download</i></a>
                                 </p>
                             </li>
                         </ul>
